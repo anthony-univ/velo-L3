@@ -1,7 +1,5 @@
 package fr.ufc.l3info.oprog;
 
-import jdk.nashorn.internal.ir.annotations.Ignore;
-
 import java.util.HashSet;
 import java.util.Set;
 

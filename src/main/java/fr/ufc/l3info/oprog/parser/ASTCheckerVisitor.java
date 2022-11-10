@@ -1,7 +1,6 @@
 package fr.ufc.l3info.oprog.parser;
 
 import fr.ufc.l3info.oprog.Station;
-import org.omg.PortableInterceptor.ORBInitInfoPackage.DuplicateName;
 
 import java.util.HashMap;
 import java.util.HashSet;
