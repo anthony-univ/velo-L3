@@ -3,164 +3,131 @@ package fr.ufc.l3info.oprog;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.mockito.junit.MockitoJUnitRunner;
 
+@RunWith(MockitoJUnitRunner.class)
 public class JRegistreTest {
 
-    private JRegistre r;
-    private Abonne a;
     private IVelo v;
+    private Abonne a;
+    private JRegistre j;
+
 
     @Before
-    public void before() throws IncorrectNameException {
-        r = new JRegistre();
-        a = new Abonne("Paul");
+    public void init() throws IncorrectNameException{
+        j = new JRegistre();
+        a = new Abonne("Hanniebal Tringue");
         v = new Velo();
     }
 
     @Test
-    public void testEmprunterVeloNull() {
-        v = null;
-        Assert.assertEquals(-1, r.emprunter(a, v, 0));
-        Assert.assertEquals(0, r.nbEmpruntsEnCours(a));
+    public void emprunterValide(){
+        Assert.assertEquals(0,j.emprunter(a,v,10));
     }
 
     @Test
-    public void testEmprunterAbonneNull() {
-        a = null;
-        Assert.assertEquals(-1, r.emprunter(a, v, 0));
+    public void emprunterNonValideAbonneNull(){
+        Assert.assertEquals(-1,j.emprunter(null,v,10));
     }
 
     @Test
-    public void testEmprunterMemeVelo() throws IncorrectNameException {
-        Assert.assertEquals(0, r.emprunter(a, v, 0));
-        Assert.assertEquals(1, r.nbEmpruntsEnCours(a));
-        Abonne b = new Abonne("Paul");
-        Assert.assertEquals(-2, r.emprunter(b, v, 1));
-        Assert.assertEquals(0, r.nbEmpruntsEnCours(b));
+    public void emprunterNonValideVeloNull(){
+        Assert.assertEquals(-1,j.emprunter(a,null,10));
     }
 
     @Test
-    public void testEmprunterVeloChevauchant() throws IncorrectNameException {
-        Assert.assertEquals(0, r.emprunter(a, v, -2));
-        Assert.assertEquals(1, r.nbEmpruntsEnCours(a));
-        Assert.assertEquals(0, r.retourner(v,0));
-        Assert.assertEquals(0, r.nbEmpruntsEnCours(a));
-        Abonne b = new Abonne("Paul");
-        Assert.assertEquals(-2, r.emprunter(b, v, -1));
-        Assert.assertEquals(0, r.nbEmpruntsEnCours(b));
+    public void emprunterNonValideDejaEmprunter(){
+        Assert.assertEquals(0,j.emprunter(a,v,10));
+        Assert.assertEquals(-2,j.emprunter(a,v,10));
     }
 
     @Test
-    public void plusVitequeSonOmbre() {
-        Assert.assertEquals(0, r.emprunter(a, v, 0));
-        Assert.assertEquals(0, r.retourner(v,0));
-        Assert.assertEquals(0, r.nbEmpruntsEnCours(a));
+    public void emprunterNonValideDejaEmprunterz() throws IncorrectNameException {
+        Abonne a = new Abonne("Maude Cologne");
+        Assert.assertEquals(0,j.emprunter(a,v,0));
+        Assert.assertEquals(0,j.retourner(v,10));
+        Assert.assertEquals(-2,j.emprunter(a,v,0));
     }
 
     @Test
-    public void testEmprunterDeuxVeloAbonne()  {
-        Assert.assertEquals(0, r.emprunter(a, v, 0));
-        Velo v2 = new Velo();
-        Assert.assertEquals(0, r.emprunter(a, v2, 0));
-        Assert.assertEquals(2, r.nbEmpruntsEnCours(a));
+    public void retournerValide(){
+        Assert.assertEquals(0,j.emprunter(a,v,10));
+        Assert.assertEquals(0,j.retourner(v,10));
     }
 
     @Test
-    public void testEmprunterVelo()  {
-        Assert.assertEquals(0, r.emprunter(a, v, 0));
-        Assert.assertEquals(1, r.nbEmpruntsEnCours(a));
-
-        Velo v2 = new Velo();
-        Assert.assertEquals(0, r.emprunter(a, v2, 0));
-        Assert.assertEquals(2, r.nbEmpruntsEnCours(a));
-
-        Velo v3 = new Velo();
-        Assert.assertEquals(0, r.emprunter(a, v3, 0));
-        Assert.assertEquals(3, r.nbEmpruntsEnCours(a));
+    public void retournerNonValideVeloNUll(){
+        Assert.assertEquals(0,j.emprunter(a,v,10));
+        Assert.assertEquals(-1,j.retourner(null,10));
     }
 
     @Test
-    public void testRetournerVeloNull()  {
-        v = null;
-        Assert.assertEquals(-1, r.retourner(v, 0));
-        Assert.assertEquals(0, r.nbEmpruntsEnCours(a));
+    public void retournerNonValideVeloNOnEmprunter(){
+        Assert.assertEquals(-2,j.retourner(v,10));
     }
 
     @Test
-    public void testRetournerVeloPasEmprunter()  {
-        Assert.assertEquals(-2, r.retourner(v, 0));
-        Assert.assertEquals(0, r.nbEmpruntsEnCours(a));
+    public void retournerNonValideDateAntérieur(){
+        Assert.assertEquals(0,j.emprunter(a,v,10));
+        Assert.assertEquals(-3,j.retourner(v,-10));
     }
 
     @Test
-    public void testRetournerVeloDateAnterieur()  {
-        Assert.assertEquals(0, r.emprunter(a, v, 0));
-        Assert.assertEquals(1, r.nbEmpruntsEnCours(a));
-        Assert.assertEquals(-3, r.retourner(v, -30000));
-        Assert.assertEquals(1, r.nbEmpruntsEnCours(a));
+    public void retournerNonValideChevaucher(){
+        Assert.assertEquals(0,j.emprunter(a,v,10));
+        Assert.assertEquals(0,j.retourner(v,20));
+        Assert.assertEquals(0,j.emprunter(a,v,5));
+        Assert.assertEquals(-3,j.retourner(v,15));
     }
 
     @Test
-    public void testRetournerVeloChevauchant() throws IncorrectNameException {
-        Assert.assertEquals(0, r.emprunter(a, v, -30000));
-        Assert.assertEquals(1, r.nbEmpruntsEnCours(a));
-        Assert.assertEquals(0, r.retourner(v,0));
-        Assert.assertEquals(0, r.nbEmpruntsEnCours(a));
-        Abonne b = new Abonne("Paul");
-        Assert.assertEquals(0, r.emprunter(b, v, -60000));
-        Assert.assertEquals(1, r.nbEmpruntsEnCours(b));
-        // devrait retourner -3
-        Assert.assertEquals(-3, r.retourner(v, 60000));
+    public void retournerNopkoehjoergnioergui(){
+        Assert.assertEquals(0,j.emprunter(a,v,10));
+
+    }
+
+
+
+
+    @Test
+    public void nbEmpruntsEnCoursValide0(){
+        Assert.assertEquals(0,j.nbEmpruntsEnCours(a));
     }
 
     @Test
-    public void testFacturationHb() {
-        Assert.assertEquals(0, r.emprunter(a, v, 0));
-        Assert.assertEquals(0, r.retourner(v, 60000));
-        Assert.assertEquals(0, r.facturation(a, 0, 50000), 0.001);
+    public void nbEmpruntsEnCoursValideMANY() throws IncorrectNameException {
+        Assert.assertEquals(0,j.emprunter(a,v,10));
+        for (int i = 0; i < 100; i++) {
+            Velo VV = new Velo();
+            Assert.assertEquals(0,j.emprunter(a,VV,10));
+        }
+        Assert.assertEquals(0,j.retourner(v,20));
+        Assert.assertEquals(100,j.nbEmpruntsEnCours(a));
     }
 
     @Test
-    public void testFacturation() {
-        Assert.assertEquals(0, r.emprunter(a, v, 0));
-        Assert.assertEquals(0, r.retourner(v, 60000));
-        Assert.assertEquals(0, r.emprunter(a, v, 60001));
-        Assert.assertEquals(0, r.retourner(v, 180000));
-        Assert.assertEquals(0, r.emprunter(a, v, 180001));
-        Assert.assertEquals(0, r.retourner(v, 300000));
-        Assert.assertEquals(0, r.emprunter(a, v, 300001));
-        Assert.assertEquals(0, r.retourner(v, 400000));
-
-        Assert.assertEquals(0.133, r.facturation(a, 0, 600000), 0.001);
+    public void facturationValide4(){
+        long now=System.currentTimeMillis();
+        long dans10minutes=now+10 * 60 * 1000;
+        Assert.assertEquals(0,j.emprunter(a,v,now));
+        Assert.assertEquals(0,j.retourner(v,dans10minutes));
+        Assert.assertEquals(v.tarif()/6,j.facturation(a,now,dans10minutes),0);
     }
 
     @Test
-    public void testFacturationMinutePresDessous() {
-        Assert.assertEquals(0, r.emprunter(a, v, 0));
-        Assert.assertEquals(0, r.retourner(v, 59999));
-        Assert.assertEquals(0.0, r.facturation(a, 0, 600000), 0.001);
+    public void facturationValide(){
+        Assert.assertEquals(0,j.emprunter(a,v,0));
+        Assert.assertEquals(0,j.retourner(v,60));
+        Assert.assertEquals(0,j.facturation(a,0,60),0.00001);
     }
 
     @Test
-    public void testFacturationMinutePresEqual() {
-        Assert.assertEquals(0, r.emprunter(a, v, 0));
-        Assert.assertEquals(0, r.retourner(v, 60000));
-        Assert.assertEquals(0.033, r.facturation(a, 0, 600000), 0.001);
+    public void facturationNonValideAbonneNull(){
+        Assert.assertEquals(0,j.facturation(null,0,60),0.00001);
     }
 
-    @Test
-    public void testFacturationMinutePresDessus() {
-        Assert.assertEquals(0, r.emprunter(a, v, 0));
-        Assert.assertEquals(0, r.retourner(v, 120001));
-        Assert.assertEquals(0.066, r.facturation(a, 0, 600000), 0.001);
-    }
 
-    @Test
-    public void testJRegistrefaux() {
-        Assert.assertEquals(0, r.emprunter(a, v, 30000));
-        Assert.assertEquals(0, r.retourner(v, 60000));
-        Assert.assertEquals(0, r.emprunter(a, v, 0));
-        //devrait retourner -3
-        Assert.assertEquals(-3, r.retourner(v, 90000));
-    }
+
+
 }

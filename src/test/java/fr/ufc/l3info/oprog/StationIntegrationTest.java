@@ -3,495 +3,494 @@ package fr.ufc.l3info.oprog;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
+
 import org.mockito.Mockito;
+import org.mockito.internal.matchers.Null;
+import org.mockito.junit.MockitoJUnitRunner;
+import org.junit.runner.RunWith;
 
 import java.util.HashSet;
 import java.util.Set;
 
+/**
+ * Test unitaire pour la FabriqueVeloTest.
+ */
 public class StationIntegrationTest {
 
-    private Abonne a = null;
-    private IVelo v = null;
-    private IRegistre r = null;
-    private Station s = null;
+    private IVelo v;
+    private IRegistre r;
+    private Abonne a;
 
     @Before
-    public void before() throws IncorrectNameException {
-        a = new Abonne("paul", "11111-11111-11111111111-48");
-        v = new Velo();
+    public void init() throws IncorrectNameException {
         r = new JRegistre();
-        s = new Station("Gare viotte", 47.246501551427329, 6.022715427111734, 10);
-    }
-
-    public void initVeloArrimerEmprunter(IVelo v, int b) {
-        Assert.assertEquals(-4, s.arrimerVelo(v,b));
-        Assert.assertNotNull(s.emprunterVelo(a, b));
-        Assert.assertNull(s.veloALaBorne(b));
+        v = new Velo();
+        a = new Abonne("zergzegzegf","00000-00000-00000000000-97");
     }
 
     @Test
-    public void constructeurTestLatitudeStationIncorrect() {
-        Station station = new Station("toto", -90.1, 0, 1); // 0,0
-        Assert.assertEquals("toto", station.getNom());
-        Assert.assertEquals(1, station.capacite());
+    public void testArrimerVeloValid() {
+        Station s = new Station("Gare Viotte",47.24705,6.0219527,10);
+        s.setRegistre(r);
+        Assert.assertEquals(-4, s.arrimerVelo(v, 1));
+
+        System.out.println(s.capacite());
+        System.out.println(s.nbBornesLibres());
+        System.out.println(s.veloALaBorne(1));
+        IVelo vv = s.emprunterVelo(a,1);
+
     }
 
     @Test
-    public void constructeurTestLongitudeStationIncorrect() {
-        Station station = new Station("toto", 0, -90.1, 1); // 0,0
-        Assert.assertEquals("toto", station.getNom());
-        Assert.assertEquals(1, station.capacite());
-        //Assert.assertEquals(5286.005745244741, s.distance(station), 0.0000001);
-    }
-
-    @Test
-    public void constructeurTestLatitudeLongitudeStationTropPetite() {
-        Station station = new Station("toto", -90.1, -90.1, 1); // 0,0
-        Assert.assertEquals("toto", station.getNom());
-        Assert.assertEquals(1, station.capacite());
-        //Assert.assertEquals(5286.005745244741, station.distance(s), 0.0000001);
-    }
-
-    @Test
-    public void constructeurTestLatitudeLongitudeStationTropGrande() {
-        Station station = new Station("toto", 90.1, 90.1, 1); // 0,0
-        Assert.assertEquals("toto", station.getNom());
-        Assert.assertEquals(1, station.capacite());
-        //Assert.assertEquals(5286.005745244741, station.distance(s), 0.0000001);
-    }
-
-    @Test
-    public void constructeurTestCapaciteNegative() {
-        Station station = new Station("toto", 0, 0, -1);
-        Assert.assertEquals("toto", station.getNom());
-        Assert.assertEquals(0, station.capacite());
-    }
-
-    @Test
-    public void constructeurTest() {
-        Station station = new Station("toto", -50.05414157294687, 87.456224784491237, 5);
-        Assert.assertEquals("toto", station.getNom());
-        Assert.assertEquals(5, station.capacite());
-        Assert.assertEquals(13328.78, s.distance(station), 0.5);
-    }
-
-    @Test
-    public void arrimerVeloNull() {
-        v = null;
-        Assert.assertEquals(-1, s.arrimerVelo(v, 1));
-        Assert.assertNull(s.veloALaBorne(1));
-    }
-
-    @Test
-    public void arrimerVeloBorneTropPetite() {
+    public void testDecrocherNonValid0() {
+        Station s = new Station("Gare Viotte",47.24705,6.0219527,10);
+        s.setRegistre(r);
         Assert.assertEquals(-1, s.arrimerVelo(v, 0));
-        Assert.assertNull(s.veloALaBorne(1));
+
     }
 
     @Test
-    public void arrimerVeloBorneTropGrande() {
+    public void testArrimerVeloNull() {
+        Station s = new Station("Gare Viotte",47.24705,6.0219527,10);
+        s.setRegistre(r);
+        Assert.assertEquals(-1, s.arrimerVelo(null, 0));
+
+    }
+
+    @Test
+    public void testArrimerBornesTooMany() {
+        Station s = new Station("Gare Viotte",47.24705,6.0219527,10);
+        s.setRegistre(r);
         Assert.assertEquals(-1, s.arrimerVelo(v, 11));
-        Assert.assertNull(s.veloALaBorne(1));
+
     }
 
     @Test
-    public void arrimerVeloRegistreNull() {
+    public void testArrimerRegistreNull() {
+        Station s = new Station("Gare Viotte",47.24705,6.0219527,10);
+        Assert.assertEquals(-1, s.arrimerVelo(v, -2));
+    }
+
+    @Test
+    public void testArrimerVeloBorneNull() {
+        Station s = new Station("Gare Viotte",47.24705,6.0219527,10);
+        s.setRegistre(r);
+        IVelo vBis = new Velo();
+        Assert.assertEquals(-4, s.arrimerVelo(v, 1));
         Assert.assertEquals(-2, s.arrimerVelo(v, 1));
-        Assert.assertNull(s.veloALaBorne(1));
     }
 
     @Test
-    public void arrimerVeloSurBornePrise() {
-        s.setRegistre(r);
-        initVeloArrimerEmprunter(v, 1);
-        Assert.assertEquals(0, s.arrimerVelo(v, 1));
-        IVelo v2 = new Velo();
-        Assert.assertEquals(-2, s.arrimerVelo(v2, 1));
-        Assert.assertNotNull(s.veloALaBorne(1));
+    public void testArrimerVeloBorneNullRegisterNull() {
+        Station s = new Station("Gare Viotte",47.24705,6.0219527,10);
+        IVelo vBis = new Velo();
+        Assert.assertEquals(-2, s.arrimerVelo(v, 1));
+        Assert.assertEquals(-2, s.arrimerVelo(v, 1));
     }
 
     @Test
-    public void arrimerDeuxFoisVelo() {
+    public void testArrimerDejaArrimer() {
+        Station s = new Station("Gare Viotte",47.24705,6.0219527,10);
         s.setRegistre(r);
-        initVeloArrimerEmprunter(v, 1);
-        Assert.assertEquals(0, s.arrimerVelo(v, 1));
-
-        Assert.assertEquals(-3, s.arrimerVelo(v, 2));
-        Assert.assertNotNull(s.veloALaBorne(1));
-        Assert.assertNull(s.veloALaBorne(2));
+        v.arrimer();
+        Assert.assertEquals(-3, s.arrimerVelo(v, 1));
     }
 
     @Test
-    public void arimerVeloPasEmprunter() {
+    public void testArrimerRetournerNotWork() {
+        Station s = new Station("Gare Viotte",47.24705,6.0219527,10);
         s.setRegistre(r);
-
+        r.retourner(v,1);
         Assert.assertEquals(-4, s.arrimerVelo(v, 1));
-        Assert.assertNotNull(s.veloALaBorne(1));
+    }
+
+
+    @Test
+    public void testGetNom() {
+        Station s = new Station("Gare Viotte",47.24705,6.0219527,10);
+        Assert.assertEquals("Gare Viotte", s.getNom());
     }
 
     @Test
-    public void arimerVeloMauvaiseDateRetour() {
-        s = Mockito.spy(s);
+    public void testCapacitee() {
+        Station s = new Station("Gare Viotte",47.24705,6.0219527,10);
+        Assert.assertEquals(10, s.capacite());
+    }
+
+    @Test
+    public void testVeloAlaBorneMinus() {
+        Station s = new Station("Gare Viotte",47.24705,6.0219527,10);
         s.setRegistre(r);
-        initVeloArrimerEmprunter(v, 1);
-        Mockito.when(s.maintenant()).thenReturn(System.currentTimeMillis() - 10 * 60 * 1000);
+        Assert.assertEquals(null,s.veloALaBorne(-10));
+
+    }
+
+    @Test
+    public void testVeloAlaBorneMaaxus() {
+        Station s = new Station("Gare Viotte",47.24705,6.0219527,10);
+        s.setRegistre(r);
+        Assert.assertEquals(null,s.veloALaBorne(6548));
+
+    }
+
+    @Test
+    public void testNombreBorneLibres() {
+        Station s = new Station("Gare Viotte",47.24705,6.0219527,10);
+        s.setRegistre(r);
+        Assert.assertEquals(-4,s.arrimerVelo(v,1));
+        Assert.assertEquals(9,s.nbBornesLibres());
+
+    }
+
+    @Test
+    public void testDistance() {
+        Station s = new Station("Gare Viotte",47.24705,6.0219527,10);
+        Station se = new Station("Isembart",47.243093093172654,6.025615409841949,8);
+        Assert.assertEquals(0.5196,s.distance(se),0.0001);
+    }
+
+
+    @Test
+    public void testEmprunterValid() {
+        Station s = new Station("Gare Viotte",47.24705,6.0219527,10);
+        s.setRegistre(r);
         Assert.assertEquals(-4, s.arrimerVelo(v, 1));
-        Assert.assertNotNull(s.veloALaBorne(1));
+        Assert.assertEquals(v, s.emprunterVelo(a, 1));
+
     }
 
     @Test
-    public void arrimerVeloCorrect() {
+    public void testEmprunterRegisterNull() {
+        Station s = new Station("Gare Viotte",47.24705,6.0219527,10);
         s.setRegistre(r);
-        initVeloArrimerEmprunter(v, 1);
-        Assert.assertEquals(0, s.arrimerVelo(v, 1));
-        Assert.assertNotNull(s.veloALaBorne(1));
-    }
-
-    @Test
-    public void emprunterVeloRegistreNull() {
-        s.setRegistre(r);
-        Assert.assertEquals(-4, s.arrimerVelo(v,1));
+        Assert.assertEquals(-4, s.arrimerVelo(v, 1));
         s.setRegistre(null);
-        Assert.assertNull(s.emprunterVelo(a, 1));
+        Assert.assertEquals(null, s.emprunterVelo(a, 0));
+
     }
 
     @Test
-    public void emprunterVeloAbonneNull() {
-        s.setRegistre(r);
-        a = null;
-        Assert.assertNull(s.emprunterVelo(a, 1));
-    }
-
-    @Test
-    public void emprunterVeloBornevide() {
-        s.setRegistre(r);
-        Assert.assertNull(s.emprunterVelo(a, 1));
-    }
-
-    @Test
-    public void emprunterVeloBorneTropPetite() {
-        s.setRegistre(r);
-        Assert.assertNull(s.emprunterVelo(a, 0));
-    }
-
-    @Test
-    public void emprunterVeloBorneTropGrande() {
-        s.setRegistre(r);
-        Assert.assertNull(s.emprunterVelo(a, 11));
-    }
-
-    @Test
-    public void emprunterVeloAbonneBloque() throws IncorrectNameException {
-        s.setRegistre(r);
-        Abonne b = new Abonne("bob");
-        Assert.assertEquals(-4, s.arrimerVelo(v,1));
-        Assert.assertNull(s.emprunterVelo(b, 1));
-    }
-
-
-    @Test
-    public void emprunterVeloDejaEmprunter() throws IncorrectNameException {
-        s.setRegistre(r);
-        initVeloArrimerEmprunter(v, 1);
-        Abonne b = new Abonne("bob", "11111-11111-11111111111-48");
-        Assert.assertNull(s.emprunterVelo(b, 1));
-    }
-
-    @Test
-    public void emprunterVeloCorrect() {
+    public void testEmprunterAbonneNull() {
+        Station s = new Station("Gare Viotte",47.24705,6.0219527,10);
         s.setRegistre(r);
         Assert.assertEquals(-4, s.arrimerVelo(v, 1));
-        Assert.assertNotNull(s.veloALaBorne(1));
+        Assert.assertEquals(null, s.emprunterVelo(null, 0));
 
-        Assert.assertNotNull(s.emprunterVelo(a, 1));
     }
 
     @Test
-    public void emprunterVeloAbonneDejaEmprunt() {
+    public void testEmprunterAbonneEmpruntEnCour() {
+        Station s = new Station("Gare Viotte",47.24705,6.0219527,10);
+        s.setRegistre(r);
+        Velo vv = new Velo();
+        s.arrimerVelo(vv,2);
+        s.emprunterVelo(a,2);
+        Assert.assertEquals(-4, s.arrimerVelo(v, 1));
+        Assert.assertEquals(null, s.emprunterVelo(a, 0));
+
+    }
+
+    @Test
+    public void testEmprunterAbonneBloquer() {
+        Station s = new Station("Gare Viotte",47.24705,6.0219527,10);
+        s.setRegistre(r);
+        a.bloquer();
+        Assert.assertEquals(-4, s.arrimerVelo(v, 1));
+        Assert.assertEquals(null, s.emprunterVelo(a, 0));
+
+    }
+
+    @Test
+    public void testEmprunterIndexUnderCpacity() {
+        Station s = new Station("Gare Viotte",47.24705,6.0219527,10);
         s.setRegistre(r);
         Assert.assertEquals(-4, s.arrimerVelo(v, 1));
-        Assert.assertEquals(-4, s.arrimerVelo(new Velo(), 2));
-        Assert.assertNotNull(s.emprunterVelo(a, 1));
-        Assert.assertEquals(1, r.nbEmpruntsEnCours(a));
-        Assert.assertNull(s.emprunterVelo(a, 2));
-        Assert.assertEquals(1, r.nbEmpruntsEnCours(a));
+        Assert.assertEquals(null, s.emprunterVelo(a, -9));
+
     }
 
     @Test
-    public void avance() {
-        s = Mockito.spy(s);
+    public void testEmprunterIndexUpperCpacity() {
+        Station s = new Station("Gare Viotte",47.24705,6.0219527,10);
         s.setRegistre(r);
-        long dateEmprunt = s.maintenant();
-        initVeloArrimerEmprunter(v,1 );
-        v.parcourir(42.0);
-        Assert.assertEquals(500.0 - 42.0, v.prochaineRevision(), 0.001);
-        Mockito.when(s.maintenant()).thenReturn(System.currentTimeMillis() + 2 * 10 * 60 * 1000);
-        Assert.assertEquals(0, s.arrimerVelo(v, 1));
+        Assert.assertEquals(-4, s.arrimerVelo(v, 1));
+        Assert.assertEquals(null, s.emprunterVelo(a, 6465));
 
-        Assert.assertEquals(0.666 , r.facturation(a, dateEmprunt, s.maintenant()), 0.001);
-
-        v.parcourir(42.0);
-        Assert.assertEquals(500.0 - 42.0, v.prochaineRevision(), 0.001);
     }
 
     @Test
-    public void testParis() {
-        Station station = new Station("Gare Viotte", 48.8566,2.3522,1); // 0,0
-        Assert.assertEquals(326.268, station.distance(s), 0.5);
+    public void testEmprunterAllreadyDecrocher() {
+        Station s = new Station("Gare Viotte",47.24705,6.0219527,10);
+        s.setRegistre(r);
+        Assert.assertEquals(-4, s.arrimerVelo(v, 1));
+        Assert.assertEquals(null, s.emprunterVelo(a, 0));
+
     }
 
     @Test
-    public void equilibrer() {
-        for(int j = 0; j < 200000; ++j) {
-            int capaciteStation = (int) (Math.random() * 20);
+    public void testEmprunterRegisterEmprunter() {
+        Station s = new Station("Gare Viotte",47.24705,6.0219527,10);
+        s.setRegistre(r);
+        Assert.assertEquals(-4, s.arrimerVelo(v, 1));
+        Assert.assertEquals(null, s.emprunterVelo(a, 0));
 
-            s = new Station("Gare viotte", 47.246501551427329, 6.022715427111734, capaciteStation);
-            s.setRegistre(r);
+    }
 
-            Set<IVelo> velos = new HashSet<>();
+    @Test
+    public void testEmprunterNoVelo() {
+        Station s = new Station("Gare Viotte",47.24705,6.0219527,10);
+        s.setRegistre(r);
+        Assert.assertEquals(null, s.emprunterVelo(a, 0));
 
-            int nombreVeloStation = (int) (Math.random() * (capaciteStation));
-            int nbVeloBonEtat = 0;
-            int nbVeloAbime = 0;
-            int nbVeloReviser = 0;
-            int nbVeloAbimeReviser = 0;
+    }
 
-            for (int i = 0; i < nombreVeloStation; ++i) {
-                IVelo v = new Velo();
-                int choix = (int) (Math.random() * 4);
+    private IVelo addToSet(Set<IVelo> velos){
+        IVelo o = new Velo();
+        velos.add(o);
+        return o;
+    }
+    private Set<IVelo> createCamion(int nbVeloBien, int nbVeloAbiber, int nbVeloAreviser,int nbVeloAbimerEtAreviser){
+        Set<IVelo> camion = new HashSet<>();
 
-                switch (choix) {
-                    case 0: // velo sain
-                        ++nbVeloBonEtat;
-                        break;
-                    case 1: // velo abime
-                        v.abimer();
-                        ++nbVeloAbime;
-                        break;
-                    case 2: // velo a reviser
-                        v.parcourir(1000.0);
-                        ++nbVeloReviser;
-                        break;
-                    case 3: // velo abime et a reviser
-                        v.abimer();
-                        v.parcourir(1000.0);
-                        ++nbVeloAbimeReviser;
-                        break;
-                }
-                Assert.assertEquals(-4, s.arrimerVelo(v, i+1));
-                Assert.assertNotNull(s.veloALaBorne(i+1));
-            }
+        for (int i = 0; i < nbVeloBien; i++) {
+            IVelo v1 = new Velo();
+            camion.add(v1);
+        }
 
-            int nombreVeloCamion = (int) (Math.random() * (30));
-            int nbVeloBonEtatCamion = 0;
-            int nbVeloAbimeCamion = 0;
-            int nbVeloReviserCamion = 0;
-            int nbVeloAbimeReviserCamion = 0;
+        for (int i = 0; i < nbVeloAbimerEtAreviser; i++) {
+            IVelo v1 = new Velo();
+            v1.abimer();
+            v1.parcourir(1000);
+            camion.add(v1);
+        }
 
-            for (int i = 0; i < nombreVeloCamion; ++i) {
-                IVelo v = new Velo();
-                velos.add(v);
-                int choix = (int) (Math.random() * 4);
-                switch (choix) {
-                    case 0: // velo sain
-                        ++nbVeloBonEtatCamion;
-                        break;
-                    case 1: // velo abime
-                        v.abimer();
-                        ++nbVeloAbimeCamion;
-                        break;
-                    case 2: // velo a reviser
-                        v.parcourir(1000.0);
-                        ++nbVeloReviserCamion;
-                        break;
-                    case 3: // velo abime et a reviser
-                        v.abimer();
-                        v.parcourir(1000.0);
-                        ++nbVeloAbimeReviserCamion;
-                        break;
-                }
-            }
-            /*
-            System.out.println("\t<<<<<<<<AVANT EQUILIBRAGE>>>>>>>>>");
-            System.out.println("\t\t\t\t\t" + "STATION");
-            System.out.println("---------------------------------------------");
-            System.out.println("|\t\t\t " + "Capacite station: " + capaciteStation + "\t\t\t|");
-            System.out.println("|\t\t" + "Nombre totale de velo : " + nombreVeloStation + "\t\t\t|");
-            System.out.println("|\t\t" + "Nombre velo bon etat : " + nbVeloBonEtat + "\t\t\t|");
-            System.out.println("|\t\t" + "Nombre velo abime : " + nbVeloAbime + "\t\t\t\t|");
-            System.out.println("|\t\t" + "Nombre velo a reviser : " + nbVeloReviser + "\t\t\t|");
-            System.out.println("|\t\t" + "Nombre velo abime/reviser : " + nbVeloAbimeReviser + "\t\t|");
-            System.out.println("---------------------------------------------");
-            System.out.println("\t\t\t\t\t" + "CAMION");
-            System.out.println("---------------------------------------------");
-            System.out.println("|\t\t" + "Nombre totale de velo : " + nombreVeloCamion + "\t\t\t|");
-            System.out.println("|\t\t" + "Nombre velo bon etat : " + nbVeloBonEtatCamion + "\t\t\t|");
-            System.out.println("|\t\t" + "Nombre velo abime : " + nbVeloAbimeCamion + "\t\t\t\t|");
-            System.out.println("|\t\t" + "Nombre velo a reviser : " + nbVeloReviserCamion + "\t\t\t|");
-            System.out.println("|\t\t" + "Nombre velo abime/reviser : " + nbVeloAbimeReviserCamion + "\t\t|");
-            System.out.println("---------------------------------------------");
-            */
+        for (int i = 0; i < nbVeloAreviser; i++) {
+            IVelo v1 = new Velo();
+            v1.parcourir(1000);
+            camion.add(v1);
+        }
 
-            if (nbVeloAbime + nbVeloAbimeReviser < nbVeloBonEtatCamion) {
-                nbVeloBonEtatCamion -= (nbVeloAbime + nbVeloAbimeReviser);
-                nbVeloBonEtat += nbVeloAbime + nbVeloAbimeReviser;
-            } else {
-                nbVeloBonEtat += nbVeloBonEtatCamion;
-                nbVeloBonEtatCamion = 0;
-            }
+        for (int i = 0; i < nbVeloAbiber; i++) {
+            IVelo v1 = new Velo();
+            v1.abimer();
+            camion.add(v1);
+        }
 
-            nbVeloAbimeCamion += nbVeloAbime;
-            nbVeloAbimeReviserCamion += nbVeloAbimeReviser;
-            nbVeloAbime = nbVeloAbimeReviser = 0;
 
-            if (nbVeloReviser > 0 && nbVeloBonEtatCamion>0) {
-                if (nbVeloBonEtatCamion >= nbVeloReviser) { //si reste velo bon etat camion
-                    nbVeloReviserCamion += nbVeloReviser;
-                    nbVeloBonEtatCamion -= nbVeloReviser;
-                    nbVeloBonEtat += nbVeloReviser;
-                    nbVeloReviser = 0;
-                } else {
-                    nbVeloReviserCamion += nbVeloBonEtatCamion;
-                    nbVeloReviser -= nbVeloBonEtatCamion;
-                    nbVeloBonEtat += nbVeloBonEtatCamion;
-                    nbVeloBonEtatCamion = 0;
-                }
-            }
+        return camion;
+    }
 
-            int size = nbVeloBonEtat + nbVeloReviser + nbVeloAbimeReviser + nbVeloAbime;
-            //pas assez
-            if ((size) < Math.ceil(s.capacite() / 2.0)) {
-                int nbVeloManquant = (int) (Math.ceil(s.capacite() / 2.0) - (size));
-                if (nbVeloBonEtatCamion > nbVeloManquant) {
-                    nbVeloBonEtat += nbVeloManquant;
-                    nbVeloBonEtatCamion -= nbVeloManquant;
-                } else {
-                    nbVeloBonEtat += nbVeloBonEtatCamion;
-                    nbVeloBonEtatCamion = 0;
-                }
-            }
+    private void createStation(Station s,int nbVeloBien, int nbVeloAbiber, int nbVeloAreviser,int nbVeloAbimerEtAreviser){
+        int index = 1;
 
-            size = nbVeloBonEtat + nbVeloReviser + nbVeloAbimeReviser + nbVeloAbime;
-            //en trop
-            if ((size) > Math.ceil(s.capacite() / 2.0)) {
-                int nbVeloEntrop =  (size) - (int)(Math.ceil(s.capacite() / 2.0));
-                if(nbVeloReviser > nbVeloEntrop) {
-                    nbVeloReviser -= nbVeloEntrop;
-                    nbVeloReviserCamion += nbVeloEntrop;
-                }else {
-                    nbVeloBonEtatCamion += nbVeloEntrop-nbVeloReviser;
-                    nbVeloReviserCamion += nbVeloReviser;
-                    nbVeloBonEtat -= (nbVeloEntrop-nbVeloReviser);
-                    nbVeloReviser=0;
-                }
-            }
+        for (int i = 0; i < nbVeloBien; i++) {
+            IVelo v1 = new Velo();
+            s.arrimerVelo(v1,index);
+            index++;
+        }
 
-            s.equilibrer(velos);
+        for (int i = 0; i < nbVeloAbimerEtAreviser; i++) {
+            IVelo v1 = new Velo();
+            v1.abimer();
+            v1.parcourir(1000);
+            s.arrimerVelo(v1,index);
+            index++;
+        }
 
-            int nbVeloBonEtatEquilibrageCamion = 0;
-            int nbVeloAbimeEquilibrageCamion = 0;
-            int nbVeloReviserEquilibrageCamion = 0;
-            int nbVeloAbimeReviserEquilibrageCamion = 0;
-            for (IVelo v: velos) {
-                if(v.estAbime() && v.prochaineRevision() > 0) {
-                    nbVeloAbimeEquilibrageCamion++;
-                }else if(v.estAbime() && v.prochaineRevision() <=0) {
-                    ++nbVeloAbimeReviserEquilibrageCamion;
-                }else if(!v.estAbime() && v.prochaineRevision() <= 0){
-                    ++nbVeloReviserEquilibrageCamion;
-                }else{
-                    ++nbVeloBonEtatEquilibrageCamion;
-                }
-            }
+        for (int i = 0; i < nbVeloAreviser; i++) {
+            IVelo v1 = new Velo();
+            v1.parcourir(1000);
+            s.arrimerVelo(v1,index);
+            index++;
+        }
 
-            int nbVeloBonEtatEquilibrage = 0;
-            int nbVeloAbimeEquilibrage = 0;
-            int nbVeloReviserEquilibrage = 0;
-            int nbVeloAbimeReviserEquilibrage = 0;
-            for (int i = 0; i < s.capacite(); ++i) {
-                IVelo v = s.veloALaBorne(i+1);
-                if(v == null) continue;
-                if(v.estAbime() && v.prochaineRevision() > 0) {
-                    nbVeloAbimeEquilibrage++;
-                }else if(v.estAbime() && v.prochaineRevision() <=0) {
-                    ++nbVeloAbimeReviserEquilibrage;
-                }else if(!v.estAbime() && v.prochaineRevision() > 0){
-                    ++nbVeloBonEtatEquilibrage;
-                }else {
-                    ++nbVeloReviserEquilibrage;
-                }
-            }
-
-            int size_set_rechange_attendue = nbVeloBonEtatCamion + nbVeloAbimeCamion + nbVeloReviserCamion + nbVeloAbimeReviserCamion;
-            int size_borne_pleine_attendue = nbVeloBonEtat + nbVeloAbime + nbVeloReviser + nbVeloAbimeReviser;
-            int size_borne_vide_attendue = capaciteStation - size_borne_pleine_attendue;
-            /*
-            System.out.println("\t<<<<<<<<<<<<EQUILIBRAGE>>>>>>>>>>>>");
-            System.out.println("\t\t\t\t\t" + "STATION");
-            System.out.println("---------------------------------------------");
-            System.out.println("|\t\t\t " + "Capacite station: " + capaciteStation + "\t\t\t|");
-            System.out.println("|\t\t" + "Nombre totale de velo : " + (capaciteStation -s.nbBornesLibres()) + " (" + (size_borne_pleine_attendue) + ")" + "\t\t|");
-            System.out.println("|\t\t" + "Nombre velo bon etat : " + nbVeloBonEtatEquilibrage + " (" + nbVeloBonEtat + ")" + "\t\t|");
-            System.out.println("|\t\t" + "Nombre velo abime : " + nbVeloAbimeEquilibrage + " (" + nbVeloAbime + ")" + "\t\t\t|");
-            System.out.println("|\t\t" + "Nombre velo a reviser : " + nbVeloReviserEquilibrage + " (" + nbVeloReviser + ")" + "\t\t|");
-            System.out.println("|\t\t" + "Nombre velo abime/reviser : " + nbVeloAbimeReviserEquilibrage + " (" + nbVeloAbimeReviser + ")" + "\t|");
-            System.out.println("---------------------------------------------");
-            System.out.println("\t\t\t\t\t" + "CAMION");
-            System.out.println("---------------------------------------------");
-            System.out.println("|\t\t" + "Nombre totale de velo : " + velos.size() + " (" + size_set_rechange_attendue + ")" + "\t\t|");
-            System.out.println("|\t\t" + "Nombre velo bon etat : " + nbVeloBonEtatEquilibrageCamion + " (" + nbVeloBonEtatCamion + ")" + "\t\t|");
-            System.out.println("|\t\t" + "Nombre velo abime : " + nbVeloAbimeEquilibrageCamion + " (" + (nbVeloAbimeCamion) + ")" + "\t\t\t|");
-            System.out.println("|\t\t" + "Nombre velo a reviser : " + nbVeloReviserEquilibrageCamion + " (" +  nbVeloReviserCamion + ")" + "\t\t|");
-            System.out.println("|\t\t" + "Nombre velo abime/reviser : " + nbVeloAbimeReviserEquilibrageCamion + " (" +  (nbVeloAbimeReviserCamion) + ")" + "\t|");
-            System.out.println("---------------------------------------------");
-            */
-            //verifie nombre de velos a pas changer
-            Assert.assertEquals(nombreVeloStation + nombreVeloCamion,s.capacite() - s.nbBornesLibres() + velos.size());
-            //verifie de la taille du set de rechange
-            Assert.assertEquals(size_set_rechange_attendue, velos.size());
-            //verfie le nombre de borne pleine
-            Assert.assertEquals(size_borne_pleine_attendue, s.capacite()-s.nbBornesLibres());
-            //verfie le nombre de borne vide
-            Assert.assertEquals(size_borne_vide_attendue, s.nbBornesLibres());
-            //verfie la config set de velo
-            Assert.assertEquals(nbVeloAbimeEquilibrageCamion, nbVeloAbimeCamion);
-            Assert.assertEquals(nbVeloAbimeReviserEquilibrageCamion, nbVeloAbimeReviserCamion);
-            Assert.assertEquals(nbVeloReviserEquilibrageCamion, nbVeloReviserCamion);
-            Assert.assertEquals(nbVeloBonEtatEquilibrageCamion, nbVeloBonEtatCamion);
-            //verif la config des bornes
-            Assert.assertEquals(0, nbVeloAbime);
-            Assert.assertEquals(0, nbVeloAbimeReviser);
-            Assert.assertEquals(nbVeloReviserEquilibrage, nbVeloReviser);
-            Assert.assertEquals(nbVeloBonEtatEquilibrage, nbVeloBonEtat);
+        for (int i = 0; i < nbVeloAbiber; i++) {
+            IVelo v1 = new Velo();
+            v1.abimer();
+            s.arrimerVelo(v1,index);
+            index++;
         }
     }
 
     @Test
-    public void CamionNull() {
+    public void testCamionNULL() {
+        Station s = new Station("Gare Viotte", 47.24705, 6.0219527, 9);
         s.setRegistre(r);
-        IVelo v = new Velo();
         v.abimer();
-        s.arrimerVelo(v, 1);
-        s.arrimerVelo(new Velo(), 3);
-        s.arrimerVelo(new Velo(), 5);
+        s.arrimerVelo(v,1);
         s.equilibrer(null);
-        Assert.assertEquals(3, s.capacite()- s.nbBornesLibres());
+    }
+
+        @Test
+    public void testCamionVide() {
+        Station s = new Station("Gare Viotte",47.24705,6.0219527,9);
+        s.setRegistre(r);
+
+        createStation(s,2,0,2,4);
+
+        Set<IVelo> velos = createCamion(5,0,1,4);
+
+        int nbVeloAbiberStation=0;
+        int nbVeloAreviserStation=0;
+        int nbVeloAbimerEtAreviserStation=0;
+        int nbVeloBienStation=0;
+
+        for (int i = 1 ; i < s.capacite(); ++i) {
+            if(s.veloALaBorne(i) != null) {
+
+                if(s.veloALaBorne(i).estAbime() && s.veloALaBorne(i).prochaineRevision() <= 0){
+                    nbVeloAbimerEtAreviserStation++;
+                    continue;
+                }
+                if (s.veloALaBorne(i).estAbime()) {
+                    nbVeloAbiberStation++;
+                    continue;
+                }
+                if (s.veloALaBorne(i).prochaineRevision() <= 0) {
+                    nbVeloAreviserStation++;
+                    continue;
+                }
+                nbVeloBienStation++;
+            }
+        }
+
+        int nbVeloAbiberCamion=0;
+        int nbVeloAreviserCamion=0;
+        int nbVeloAbimerEtAreviserCamion=0;
+        int nbVeloBienCamion=0;
+
+        for (IVelo vv: velos) {
+            if(vv.estAbime() && vv.prochaineRevision() <= 0){
+                nbVeloAbimerEtAreviserCamion++;
+                continue;
+            }
+            if (vv.estAbime()) {
+                nbVeloAbiberCamion++;
+                continue;
+            }
+            if (vv.prochaineRevision() <= 0) {
+                nbVeloAreviserCamion++;
+                continue;
+            }
+            nbVeloBienCamion++;
+        }
+
+
+        System.out.println("nombre total de velo dans la station :"+(s.capacite()-s.nbBornesLibres()));
+        System.out.println("nombre velo bien      :"+nbVeloBienStation);
+        System.out.println("nombre velo abimer    :"+nbVeloAbiberStation);
+        System.out.println("nombre velo à réviser :"+nbVeloAreviserStation);
+        System.out.println("nombre velo abimer àre:"+nbVeloAbimerEtAreviserStation);
+
+        System.out.println("------------------------");
+
+        System.out.println("nombre total de velo dans le camion  :"+velos.size());
+        System.out.println("nombre velo bien      :"+nbVeloBienCamion);
+        System.out.println("nombre velo abimer    :"+nbVeloAbiberCamion);
+        System.out.println("nombre velo à réviser :"+nbVeloAreviserCamion);
+        System.out.println("nombre velo abimer àre:"+nbVeloAbimerEtAreviserCamion);
+
+        s.equilibrer(velos);
+        System.out.println("------------------------");
+        System.out.println("------------------------");
+        nbVeloAbiberStation=0;
+        nbVeloAreviserStation=0;
+        nbVeloAbimerEtAreviserStation=0;
+        nbVeloBienStation=0;
+
+        for (int i = 1 ; i < s.capacite(); ++i) {
+            if(s.veloALaBorne(i) != null) {
+
+                if(s.veloALaBorne(i).estAbime() && s.veloALaBorne(i).prochaineRevision() <= 0){
+                    nbVeloAbimerEtAreviserStation++;
+                    continue;
+                }
+                if (s.veloALaBorne(i).estAbime()) {
+                    nbVeloAbiberStation++;
+                    continue;
+                }
+                if (s.veloALaBorne(i).prochaineRevision() <= 0) {
+                    nbVeloAreviserStation++;
+                    continue;
+                }
+                nbVeloBienStation++;
+            }
+        }
+
+        nbVeloAbiberCamion=0;
+        nbVeloAreviserCamion=0;
+        nbVeloAbimerEtAreviserCamion=0;
+        nbVeloBienCamion=0;
+
+        for (IVelo vv: velos) {
+            if(vv.estAbime() && vv.prochaineRevision() <= 0){
+                nbVeloAbimerEtAreviserCamion++;
+                continue;
+            }
+            if (vv.estAbime()) {
+                nbVeloAbiberCamion++;
+                continue;
+            }
+            if (vv.prochaineRevision() <= 0) {
+                nbVeloAreviserCamion++;
+                continue;
+            }
+            nbVeloBienCamion++;
+        }
+
+
+        System.out.println("nombre total de velo dans la station :"+(s.capacite()-s.nbBornesLibres()));
+        System.out.println("nombre velo bien      :"+nbVeloBienStation);
+        System.out.println("nombre velo abimer    :"+nbVeloAbiberStation);
+        System.out.println("nombre velo à réviser :"+nbVeloAreviserStation);
+        System.out.println("nombre velo abimer àre:"+nbVeloAbimerEtAreviserStation);
+
+        System.out.println("------------------------");
+
+        System.out.println("nombre total de velo dans le camion  :"+velos.size());
+        System.out.println("nombre velo bien      :"+nbVeloBienCamion);
+        System.out.println("nombre velo abimer    :"+nbVeloAbiberCamion);
+        System.out.println("nombre velo à réviser :"+nbVeloAreviserCamion);
+        System.out.println("nombre velo abimer àre:"+nbVeloAbimerEtAreviserCamion);
+
+        Assert.assertEquals(5,(s.capacite()-s.nbBornesLibres()));
+        Assert.assertEquals(5,nbVeloBienStation);
+        Assert.assertEquals(0,nbVeloAbiberStation);
+        Assert.assertEquals(0,nbVeloAreviserStation);
+        Assert.assertEquals(0,nbVeloAbimerEtAreviserStation);
+
+        Assert.assertEquals(13,velos.size());
+        Assert.assertEquals(2,nbVeloBienCamion);
+        Assert.assertEquals(0,nbVeloAbiberCamion);
+        Assert.assertEquals(3,nbVeloAreviserCamion);
+        Assert.assertEquals(8,nbVeloAbimerEtAreviserCamion);
     }
 
     @Test
-    public void CamionVeloNull() {
-        s.setRegistre(r);
-        IVelo v = new Velo();
-        v.abimer();
-        s.arrimerVelo(v, 1);
-        s.arrimerVelo(new Velo(), 3);
-        s.arrimerVelo(new Velo(), 5);
-        Set<IVelo> camions = new HashSet<IVelo>();
-        camions.add(new Velo());
-        camions.add(null);
-        camions.add(new Velo());
-        s.equilibrer(camions);
-        Assert.assertEquals(4, s.capacite()- s.nbBornesLibres());
+    public void testConstructeurCapaciteNegative () {
+        Station q = new Station("Test", 0, 0, -1);
+        Assert.assertNotEquals(q.capacite(), -1);
     }
-}
 
+
+
+    @Test
+    public void facturationValide4(){
+        Station s = new Station("Test", 0, 0, 9);
+        s.setRegistre(r);
+        long now=System.currentTimeMillis();
+        long dans10minutes=now+10 * 60 * 1000;
+        Assert.assertEquals(-4, s.arrimerVelo(v, 1));
+        Assert.assertEquals(0,r.emprunter(a,v,now));
+        Assert.assertEquals(0,r.retourner(v,dans10minutes));
+        Assert.assertEquals(v.tarif()/6,r.facturation(a,now,dans10minutes),0);
+    }
+
+
+
+
+
+
+
+
+}

@@ -1,72 +1,85 @@
 package fr.ufc.l3info.oprog;
 
 import org.junit.Assert;
-import org.junit.Before;
 import org.junit.Test;
 
+import java.util.concurrent.ExecutionException;
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.regex.PatternSyntaxException;
 
+/**
+ * Test unitaire pour la FabriqueVeloTest.
+ */
 public class FabriqueVeloTest {
 
-    private FabriqueVelo fv = null;
 
-    @Before
-    public void createFabriqueVelo() {
-        fv = FabriqueVelo.getInstance();
-    }
+    private final String ALU = "CADRE_ALUMINIUM";
+    private final String S_AVANT = "SUSPENSION_AVANT";
+    private final String S_ARRIERE = "SUSPENSION_ARRIERE";
+    private final String F_DISQUE = "FREINS_DISQUE";
+    private final String A_ELEC = "ASSISTANCE_ELECTRIQUE";
 
-    @Test
-    public void testNoneOption() {
-        IVelo v = fv.construire('m');
-        Assert.assertEquals("Vélo cadre mixte - 0.0 km", v.toString());
-    }
+    private FabriqueVelo decathlon = FabriqueVelo.getInstance();
+
 
     @Test
-    public void testOneOption() {
-        IVelo v = fv.construire('m', "SUSPENSION_ARRIERE");
-        Assert.assertEquals("Vélo cadre mixte, suspension arrière - 0.0 km", v.toString());
-    }
+    public void FabriqueVeloTest() {
+        IVelo iv =  decathlon.construire('h',ALU,S_AVANT,S_ARRIERE,F_DISQUE,A_ELEC,ALU);
+        String str = iv.toString();
 
-    @Test
-    public void testOptionNull() {
-        IVelo v = fv.construire('m', null, "SUSPENSION_ARRIERE");
-        Assert.assertEquals("Vélo cadre mixte, suspension arrière - 0.0 km", v.toString());
-    }
-
-    @Test
-    public void testMultiOptions() {
-        IVelo v = fv.construire('m', "CADRE_ALUMINIUM", "SUSPENSION_AVANT", "SUSPENSION_ARRIERE", "FREINS_DISQUE", "ASSISTANCE_ELECTRIQUE");
-        Assert.assertTrue(v.toString().contains("cadre aluminium"));
-        Assert.assertTrue(v.toString().contains("suspension avant"));
-        Assert.assertTrue(v.toString().contains("suspension arrière"));
-        Assert.assertTrue(v.toString().contains("freins à disque"));
-        Assert.assertTrue(v.toString().contains("assistance électrique"));
-        Assert.assertTrue(Pattern.matches("^Vélo cadre (mixte|homme|femme)(, (cadre aluminium|freins à disque|suspension avant|suspension arrière|assistance électrique))* - [\\d]+\\.[\\d] km$", v.toString()));
-    }
-
-    @Test
-    public void testWrongOption() {
-        IVelo v = fv.construire('m', "INVALIDE_OPTION");
-        Assert.assertEquals("Vélo cadre mixte - 0.0 km", v.toString());
-    }
-
-    @Test
-    public void testSameOption() {
-        String [] options = {"CADRE_ALUMINIUM", "SUSPENSION_AVANT", "SUSPENSION_ARRIERE", "FREINS_DISQUE", "ASSISTANCE_ELECTRIQUE"};
-        String [] tab = {"cadre aluminium", "suspension avant", "suspension arrière", "freins à disque", "assistance électrique"};
-        int i =0 ;
-        for (String opt: options) {
-            IVelo v = fv.construire('m', opt, opt);
-            Assert.assertTrue(v.toString().contains(tab[i]));
-            Assert.assertEquals("Vélo cadre mixte, " + tab[i] + " - 0.0 km", v.toString());
-            ++i;
-        }
+        Assert.assertTrue(str.contains(", cadre aluminium"));
 
     }
 
     @Test
-    public void test2InstancesFabriques() {
-        FabriqueVelo fv2 = FabriqueVelo.getInstance();
-        Assert.assertEquals(fv, fv2);
+    public void DoubleOptAlu() {
+        IVelo iv =  decathlon.construire('h',S_AVANT,S_AVANT);
+        int str = iv.toString().split("suspension avant").length-1;
+
+        Assert.assertEquals(1,str);
     }
+
+    @Test
+    public void DoublSusArr() {
+        IVelo iv =  decathlon.construire('h',S_ARRIERE,S_ARRIERE);
+        int str = iv.toString().split("suspension arrière").length-1;
+
+        Assert.assertEquals(1,str);
+    }
+
+    @Test
+    public void Doubldisuqe() {
+        IVelo iv =  decathlon.construire('h',F_DISQUE,F_DISQUE);
+        int str = iv.toString().split("freins à disque").length-1;
+
+        Assert.assertEquals(1,str);
+    }
+
+    @Test
+    public void DoublassiElec() {
+        IVelo iv =  decathlon.construire('h',A_ELEC,A_ELEC);
+        int str = iv.toString().split("assistance électrique").length-1;
+
+        Assert.assertEquals(1,str);
+    }
+
+    @Test
+    public void DoubleSusAvant() {
+        IVelo iv =  decathlon.construire('h',ALU,ALU);
+        int str = iv.toString().split("cadre aluminium").length-1;
+
+        Assert.assertEquals(1,str);
+    }
+
+
+    @Test
+    public void invalidOption() {
+        IVelo iv =  decathlon.construire('h',"invalidOption");
+        String str = iv.toString();
+        Assert.assertEquals("Vélo cadre homme - 0.0 km",str);
+    }
+
+
+
 }

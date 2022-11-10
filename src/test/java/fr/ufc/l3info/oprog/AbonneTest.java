@@ -1,282 +1,210 @@
 package fr.ufc.l3info.oprog;
 
 
-import java.util.HashSet;
-
 import org.junit.Assert;
 import org.junit.Test;
+
+import java.util.concurrent.ExecutionException;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+import java.util.regex.PatternSyntaxException;
 
 /**
  * Test unitaire pour les abonnés.
  */
 public class AbonneTest {
 
-    /**
-     * Test constructeur avec nom
-     */
-    @Test(expected=IncorrectNameException.class)
-    public void testNomVide() throws IncorrectNameException {
-        Abonne a = new Abonne("");
-    }
+
+
+
+    @Test (expected = IncorrectNameException.class)
+    public void createAbonneName_NameVoid_should_not_be_create() throws IncorrectNameException {final Abonne a = new Abonne("");}
+
+    @Test (expected = IncorrectNameException.class)
+    public void createAbonneName_NameNull_should_not_be_create() throws IncorrectNameException {final Abonne a = new Abonne(null);}
 
     @Test
-    public void testNom1lettre() throws IncorrectNameException {
-        Abonne a = new Abonne("a");
-        Assert.assertEquals("a", a.getNom());
+    public void createAbonneName_NameLigation_should_be_create() throws IncorrectNameException {final Abonne a = new Abonne("cœur");}
+
+    @Test
+    public void createAbonneName_NameOnlySingelLetter_should_be_create() throws IncorrectNameException {final Abonne a = new Abonne("p");}
+
+    @Test
+    public void createAbonneName_NameValid_should_be_create() throws IncorrectNameException {final Abonne a = new Abonne("leo vandrepol");}
+
+    @Test (expected = IncorrectNameException.class)
+    public void createAbonneName_NameWithDoubleSpace_should_not_be_create() throws IncorrectNameException {final Abonne a = new Abonne("leo  vandrepol");}
+
+    @Test (expected = IncorrectNameException.class)
+    public void createAbonneName_NameWithDoubleDash_should_not_be_create() throws IncorrectNameException {final Abonne a = new Abonne("leo--vandrepol");
+    }
+
+    @Test (expected = IncorrectNameException.class)
+    public void createAbonneName_NameWithNumber_should_not_be_create() throws IncorrectNameException {final Abonne a = new Abonne("64");}
+
+    @Test (expected = IncorrectNameException.class)
+    public void createAbonneName_NameArabLetter() throws IncorrectNameException {final Abonne a = new Abonne("ث");}
+
+    @Test (expected = IncorrectNameException.class)
+    public void createAbonneName_NameCyrillicLetter () throws IncorrectNameException {final Abonne a = new Abonne("д");}
+
+
+
+    @Test
+    public void createAbonneNameRib_nameVvalid_ribNULL_should_be_create() throws IncorrectNameException {
+        final String nom = "leo-vandrepol";
+        final Abonne a = new Abonne(nom,null);
+        Assert.assertEquals(nom,a.getNom());
         Assert.assertTrue(a.estBloque());
     }
 
     @Test
-    public void testNomBasique() throws IncorrectNameException {
-        Abonne a = new Abonne("Anthony");
-        Assert.assertEquals("Anthony", a.getNom());
-        Assert.assertTrue(a.estBloque());
-    }
-
-    @Test
-    public void testNomsAvecEspacesAvantApres() throws IncorrectNameException {
-        String [] nomAvecEspacesAvantApres = {" Anthony", "Anthony ", " Anthony ", "  Anthony", "Anthony  ", "  Anthony  "};
-        for(int i = 0; i < nomAvecEspacesAvantApres.length; ++i) {
-            Abonne a = new Abonne(nomAvecEspacesAvantApres[i]);
-            Assert.assertEquals(nomAvecEspacesAvantApres[i].trim(), a.getNom());
-            Assert.assertTrue(a.estBloque());
-        }
-    }
-
-    @Test
-    public void testNomsComposes() throws IncorrectNameException {
-        String [] nomsComposes = {"Anthony gasca", "Anthony-gasca", "Anthony gasca gimeno", "Anthony-gasca-gimeno"};
-        for(int i = 0; i < nomsComposes.length; ++i) {
-            Abonne a = new Abonne(nomsComposes[i]);
-            Assert.assertEquals(nomsComposes[i], a.getNom());
-            Assert.assertTrue(a.estBloque());
-        }
-    }
-
-    @Test(expected=IncorrectNameException.class)
-    public void testNomComposesAvecDeuxEspacesConsecutif() throws IncorrectNameException {
-        Abonne a = new Abonne("Anthony  gasca");
-    }
-
-    @Test(expected=IncorrectNameException.class)
-    public void testNomComposesAvecDeuxTiretsConsecutif() throws IncorrectNameException {
-        Abonne a = new Abonne("Anthony--gasca");
-    }
-
-    @Test(expected=IncorrectNameException.class)
-    public void testNomComposesAvecUnTiretEtEspaceConsecutif() throws IncorrectNameException {
-        Abonne a = new Abonne("Anthony- gasca");
-    }
-
-    @Test(expected=IncorrectNameException.class)
-    public void testNomAvecChiffre() throws IncorrectNameException {
-        Abonne a = new Abonne("Anthony 2");
-    }
-
-    @Test
-    public void testNomsAvecLettresAccentuées() throws IncorrectNameException {
-        String [] nomsAccentues = {"Lemaître", "PRÉVÔT", "Jean pöl", "besançon"};
-        for(int i = 0; i < nomsAccentues.length; ++i) {
-            Abonne a = new Abonne(nomsAccentues[i]);
-            Assert.assertEquals(nomsAccentues[i], a.getNom());
-            Assert.assertTrue(a.estBloque());
-        }
-    }
-
-    @Test
-    public void testNomsAvecLigatures() throws IncorrectNameException {
-        String [] nomsLigatures = {"cœur", "kris KÆR"};
-        for(int i = 0; i < nomsLigatures.length; ++i) {
-            Abonne a = new Abonne(nomsLigatures[i]);
-            Assert.assertEquals(nomsLigatures[i], a.getNom());
-            Assert.assertTrue(a.estBloque());
-        }
-    }
-
-    @Test(expected=IncorrectNameException.class)
-    public void testNomNull() throws IncorrectNameException {
-        Abonne a = new Abonne(null);
-    }
-
-    /**
-     * Test constructeur avec nom et rib
-     */
-    @Test
-    public void testNomCorrectRibCorrect() throws IncorrectNameException {
-        Abonne a = new Abonne("Anthony", "11111-11111-11111111111-48"); //->rib correct
-        Assert.assertEquals("Anthony", a.getNom());
+    public void createAbonneNameRib_nameVvalid_ribInvalid_should_be_create() throws IncorrectNameException {
+        final String nom = "leo-vandrepol";
+        final Abonne a = new Abonne(nom,"00000-00000-00000000000-97");
+        Assert.assertEquals(nom,a.getNom());
         Assert.assertFalse(a.estBloque());
     }
 
-    @Test(expected=IncorrectNameException.class)
-    public void testNomIncorrectRibQuelqueSoit() throws IncorrectNameException {
-        Abonne a = new Abonne("Anthony 2", "11111-11111-11111111111-48");
-    }
-
-    @Test
-    public void testNomCorrectFormatRibIncorrect() throws IncorrectNameException {
-        Abonne a = new Abonne("Anthony", "11111 11111-11111111111 48"); //->rib incorrect car présence de lettres
-        Assert.assertEquals("Anthony", a.getNom());
-        Assert.assertTrue(a.estBloque());
-    }
-
-    @Test
-    public void testNomCorrectCléRibIncorrect() throws IncorrectNameException {
-        Abonne a = new Abonne("Anthony", "11111-11111-11111111111-47"); //->rib incorrect car clé incorrect
-        Assert.assertEquals("Anthony", a.getNom());
-        Assert.assertTrue(a.estBloque());
-    }
-
-    @Test
-    public void testNomCorrectRibTropLongDebut() throws IncorrectNameException {
-        Abonne a = new Abonne("Anthony", "FR11111-11111-11111111111-48"); //->rib incorrect car présence de lettres
-        Assert.assertEquals("Anthony", a.getNom());
-        Assert.assertTrue(a.estBloque());
-    }
-
-    @Test
-    public void testNomCorrectRibTropLongFin() throws IncorrectNameException {
-        Abonne a = new Abonne("Anthony", "11111-11111-11111111111-48FR"); //->rib incorrect car présence de lettres
-        Assert.assertEquals("Anthony", a.getNom());
-        Assert.assertTrue(a.estBloque());
-    }
-
-    @Test
-    public void testRibNull() throws IncorrectNameException {
-        Abonne a = new Abonne("Anthony", null);
-    }
-
-    /**
-     * Test mise a jour RIB
-     */
-    @Test
-    public void testMajRibPersonneAvecRibCorrect() throws IncorrectNameException {
-        Abonne a = new Abonne("Anthony", "11111-11111-11111111111-47"); //->personne bloquée car rib incorrect
-        Assert.assertTrue(a.estBloque());
-        a.miseAJourRIB("11111-11111-11111111111-48"); //->personne débloquée car rib correct
+    @Test (expected = IncorrectNameException.class)
+    public void createAbonneNameRib_nameInvalid_ribValid_should_not_be_create() throws IncorrectNameException {
+        final String nom = "leo--vandrepol";
+        final Abonne a = new Abonne(nom,"00000-00000-00000000000-97");
+        Assert.assertEquals(nom,a.getNom());
         Assert.assertFalse(a.estBloque());
     }
 
     @Test
-    public void testMajRibPersonneAvecFormatRibIncorrect() throws IncorrectNameException {
-        Abonne a = new Abonne("Anthony", "FR111-11111-11111111111-48"); //->personne bloquée car format rib incorrect
-        Assert.assertTrue(a.estBloque());
-        a.miseAJourRIB("EN111-11111-11111111111-48"); //->personne toujours bloquée car rib incorrect
-        Assert.assertTrue(a.estBloque());
-    }
-
-    @Test
-    public void testMajRibPersonneAvecCleRibIncorrect() throws IncorrectNameException {
-        Abonne a = new Abonne("Anthony", "11111-11111-11111111111-47"); //->personne bloquée car clé rib incorrect
-        Assert.assertTrue(a.estBloque());
-        a.miseAJourRIB("11111-11111-11111111111-47"); //->personne toujours bloquée car clé rib incorrect
+    public void createAbonneNameRib_nameValid_ribInvalidPattern_should_be_create_AND_block() throws IncorrectNameException {
+        final String nom = "leo-vandrepol";
+        final Abonne a = new Abonne(nom,"00000-00000-zerz-97");
+        Assert.assertEquals(nom,a.getNom());
         Assert.assertTrue(a.estBloque());
     }
 
     @Test
-    public void testMajRibPersonneInterditBancaireAvecRibCorrect() throws IncorrectNameException {
-        Abonne a = new Abonne("Anthony", "11111-11111-11111111111-48"); //->personne débloquée car rib correct
+    public void createAbonneNameRib_nameValid_ribInvalidKey_should_be_create_AND_block() throws IncorrectNameException {
+        final String nom = "leo vandrepol";
+        final Abonne a = new Abonne(nom,"00000-00000-00000000000-96");
+        Assert.assertEquals(nom,a.getNom());
+        Assert.assertTrue(a.estBloque());
+    }
+
+
+    @Test
+    public void updateRib_invalid_should_not_be_update() throws IncorrectNameException {
+        final Abonne a = new Abonne("leo vandrepol","00000-00000-00000000000-96");
+        a.miseAJourRIB("00000-00000-00000000000-95");
+        Assert.assertTrue(a.estBloque());
+    }
+
+    @Test
+    public void updateRib_valid_should_be_upadte() throws IncorrectNameException {
+        final Abonne a = new Abonne("leo vandrepol","00000-00000-00000000000-96");
+        a.miseAJourRIB("00000-00000-00000000000-97");
+        Assert.assertFalse(a.estBloque());
+    }
+
+    @Test
+    public void updateRib_valid_but_already_valid_should_be_update() throws IncorrectNameException {
+        final Abonne a = new Abonne("leo vandrepol","00000-00000-00000000000-97");
+        a.miseAJourRIB("00000-00000-00000000000-97");
+        Assert.assertFalse(a.estBloque());
+    }
+
+    @Test
+    public void updateRib_block_by_admin_should_not_be_update() throws IncorrectNameException {
+        final Abonne a = new Abonne("leo vandrepol","00000-00000-00000000000-97");
         Assert.assertFalse(a.estBloque());
         a.bloquer();
-        Assert.assertTrue(a.estBloque()); //-> personne Insterdit Bancaire
-        a.miseAJourRIB("11111-11111-11111111111-48"); //->personne toujours bloquée car l'abonne est interdit bancaire
+        a.miseAJourRIB("00000-00000-00000000000-97");
         Assert.assertTrue(a.estBloque());
     }
 
-    /**
-     * Test debloquer/bloquer
-     */
     @Test
-    public void testDebloquerPersonneAvecCoordonneesBancairesRenseignées() throws IncorrectNameException {
-        Abonne a = new Abonne("Anthony", "11111-11111-11111111111-48"); //->personne non bloquée car rib correct
+    public void unblockAbonne_WithNoRib_should_be_false() throws IncorrectNameException {
+        final Abonne a = new Abonne("leo vandrepol");
+        Assert.assertTrue(a.estBloque());
+        a.debloquer();
+        Assert.assertTrue(a.estBloque());
+    }
+
+    @Test
+    public void unblockAbonne_VolontaryBlocked_WithNoRib_should_be_false() throws IncorrectNameException {
+        final Abonne a = new Abonne("leo vandrepol");
+        Assert.assertTrue(a.estBloque());
+        a.bloquer();
+        Assert.assertTrue(a.estBloque());
+        a.debloquer();
+        Assert.assertTrue(a.estBloque());
+    }
+
+    @Test
+    public void unblockAbonne_WithRib_should_not_be_false() throws IncorrectNameException {
+        Abonne a = new Abonne("leo vandrepol", "00000-00000-00000000000-97");
         Assert.assertFalse(a.estBloque());
-        a.bloquer(); //->abonne interdit bancaire
+        a.bloquer();
         Assert.assertTrue(a.estBloque());
         a.debloquer();
         Assert.assertFalse(a.estBloque());
     }
 
     @Test
-    public void testDebloquerPersonneAvecCoordonneesBancairesNonrenseignées() throws IncorrectNameException {
-        Abonne a = new Abonne("Anthony", ""); //->personne bloquée car rib incorrect
-        Assert.assertTrue(a.estBloque());
-        a.debloquer(); //->personne toujours bloquée car rib non renseigné(rib="")
-        Assert.assertTrue(a.estBloque());
-    }
-
-    /**
-     * equals
-     */
-    @Test
-    public void testNotEquals2Abonnes() throws IncorrectNameException {
-        Abonne a = new Abonne("Anthony");
-        Abonne b = new Abonne("Léa");
+    public void equals_abonne_null_should_not_be_equals() throws IncorrectNameException {
+        final Abonne a = new Abonne("leo vandrepol");
+        final Abonne b = null;
         Assert.assertFalse(a.equals(b));
     }
 
     @Test
-    public void testEqualsAbonnesIdentique() throws IncorrectNameException {
-        Abonne a = new Abonne("Anthony");
+    public void equals_with_bad_object_type_should_not_be_equals() throws IncorrectNameException {
+        final Abonne a = new Abonne("leo vandrepol");
+        final int b = 2;
+        Assert.assertFalse(a.equals(b));
+    }
+
+    @Test
+    public void equals_should_be_the_same() throws IncorrectNameException {
+        final Abonne a = new Abonne("leo vandrepol","00000-00000-00000000000-97");
         Assert.assertTrue(a.equals(a));
     }
 
     @Test
-    public void testNotEqualsBetweenAbonneAndString() throws IncorrectNameException {
-        Abonne a = new Abonne("Anthony");
-        String b = new String("Léa");
+    public void equals_should_not_be_the_same() throws IncorrectNameException {
+        final Abonne a = new Abonne("leo vandrepol","00000-00000-00000000000-97");
+        final Abonne b = new Abonne("leo vandrepol","00000-00000-00000000000-97");
         Assert.assertFalse(a.equals(b));
     }
 
     @Test
-    public void testNotEqualsAbonneNull() throws IncorrectNameException {
-        Abonne a = new Abonne("Anthony");
-        Abonne b = null;
-        Assert.assertFalse(a.equals(b));
-    }
-
-    /**
-     * hashCode
-     */
-
-    @Test
-    public void testHashCodeEquals() throws IncorrectNameException {
-        Abonne a = new Abonne("Anthony");
-
-        Assert.assertEquals(a.hashCode(), a.hashCode());
+    public void id_negatif_should_be_false() throws IncorrectNameException{
+        final Abonne a = new Abonne("leo vandrepol");
+        Assert.assertTrue(a.getID() >= 0 );
     }
 
     @Test
-    public void testHashCodeNotEquals() throws IncorrectNameException {
-        Abonne a = new Abonne("Anthony");
-        Abonne b = new Abonne("Anthony");
+    public void id_increment_should_be_true() throws IncorrectNameException{
+        Abonne a = new Abonne("leo vandrepol");
+        for(int i= 0 ; i <1000;i++){
+            Abonne b = new Abonne("leo vandrepol");
+            Assert.assertTrue(a.getID() == b.getID()-1);
+            a = b;
+        }
 
-        Assert.assertNotEquals(a.hashCode(), b.hashCode());
+
     }
 
     @Test
-    public void TestHashSet() throws IncorrectNameException {
-        HashSet<Abonne> abonnes = new HashSet<Abonne>();
-        Abonne a = new Abonne("Anthony");
-        abonnes.add(a);
-
-        Assert.assertTrue(abonnes.contains(a));
-    }
-
-    /**
-     * testID
-     */
-    @Test
-    public void TestIdIncrement() throws IncorrectNameException {
-        Abonne a = new Abonne("Anthony");
-        Abonne b = new Abonne("Anthony");
-
-        Assert.assertEquals(a.getID()+1, b.getID());
+    public void hashCode_should_be_the_same() throws Exception {
+        final Abonne a = new Abonne("leo vandrepol");
+        Assert.assertTrue(a.hashCode() == a.hashCode());
     }
 
     @Test
-    public void TestIdNegative() throws IncorrectNameException {
-        Abonne a = new Abonne("Anthony");
-
-        Assert.assertTrue(a.getID()>=0);
+    public void hashCode_should_not_be_the_same() throws Exception {
+        final Abonne a = new Abonne("leo vandrepol");
+        final Abonne b = new Abonne("leo vandrepol");
+        Assert.assertFalse(a.hashCode() == b.hashCode());
     }
+
 }

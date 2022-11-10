@@ -1,6 +1,5 @@
 package fr.ufc.l3info.oprog.parser;
 
-import fr.ufc.l3info.oprog.Station;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -9,7 +8,7 @@ import java.io.IOException;
 import java.util.Map;
 
 import static org.junit.Assert.assertEquals;
-
+import static org.junit.Assert.assertTrue;
 public class ASTCheckerVisitorTest {
 
     /** Chemin vers les fichiers de test */
@@ -18,80 +17,99 @@ public class ASTCheckerVisitorTest {
     /** Instance singleton du parser de stations */
     final StationParser parser = StationParser.getInstance();
 
-    @Test
-    public void testStationListeVide() throws IOException, StationParserException {
-        ASTNode n = parser.parse(new File("./target/classes/data/checkedStationsVide.txt"));
-        ASTCheckerVisitor builder = new ASTCheckerVisitor();
-        n.accept(builder);
-        Map<String, ERROR_KIND> mapError =  builder.getErrors();
-        Assert.assertTrue(mapError.containsValue(ERROR_KIND.EMPTY_LIST));
-        Assert.assertEquals(1, mapError.size());
-    }
 
     @Test
-    public void testStationNomUnique() throws IOException, StationParserException {
-        ASTNode n = parser.parse(new File("./target/classes/data/checkedStationsDouble.txt"));
-        ASTCheckerVisitor builder = new ASTCheckerVisitor();
-        n.accept(builder);
-        Map<String, ERROR_KIND> mapError =  builder.getErrors();
-        Assert.assertFalse(mapError.containsValue(ERROR_KIND.EMPTY_LIST));
-        Assert.assertTrue(mapError.containsValue(ERROR_KIND.DUPLICATE_STATION_NAME));
-        Assert.assertEquals(2, mapError.size());
-    }
+    public void test() throws IOException, StationParserException{
+        ASTNode n = parser.parse(new File("./target/classes/data/double.txt"));
+        ASTCheckerVisitor visitor = new ASTCheckerVisitor();
+        n.accept(visitor);
 
-    @Test
-    public void testStationNomVide() throws IOException, StationParserException {
-    ASTNode n = parser.parse(new File("./target/classes/data/checkedStationsNomVide.txt"));
-    ASTCheckerVisitor builder = new ASTCheckerVisitor();
-    n.accept(builder);
-    Map<String, ERROR_KIND> mapError =  builder.getErrors();
-    Assert.assertFalse(mapError.containsValue(ERROR_KIND.EMPTY_LIST));
-    Assert.assertTrue(mapError.containsValue(ERROR_KIND.EMPTY_STATION_NAME));
-    Assert.assertEquals(1, mapError.size());
-    }
-
-    @Test
-    public void testStationNomEspaceTabulation() throws IOException, StationParserException {
-        ASTNode n = parser.parse(new File("./target/classes/data/checkedStationsNomEspaceTabulation.txt"));
-        ASTCheckerVisitor builder = new ASTCheckerVisitor();
-        n.accept(builder);
-        Map<String, ERROR_KIND> mapError =  builder.getErrors();
-        Assert.assertFalse(mapError.containsValue(ERROR_KIND.EMPTY_LIST));
-        Assert.assertTrue(mapError.containsValue(ERROR_KIND.EMPTY_STATION_NAME));
-        Assert.assertEquals(1, mapError.size());
+        Map<String, ERROR_KIND> errors = visitor.getErrors();
+        Assert.assertFalse(errors.isEmpty());
 
     }
 
     @Test
-    public void testStationManqueDeclaration() throws IOException, StationParserException {
-        ASTNode n = parser.parse(new File("./target/classes/data/checkedStationsManqueDeclaration.txt"));
-        ASTCheckerVisitor builder = new ASTCheckerVisitor();
-        n.accept(builder);
-        Map<String, ERROR_KIND> mapError =  builder.getErrors();
-        Assert.assertFalse(mapError.containsValue(ERROR_KIND.EMPTY_LIST));
-        Assert.assertTrue(mapError.containsValue(ERROR_KIND.MISSING_DECLARATION));
-        Assert.assertEquals(2, mapError.size());
+    public void vide() throws IOException, StationParserException{
+        ASTNode n = parser.parse(new File("./target/classes/data/vide.txt"));
+        ASTCheckerVisitor visitor = new ASTCheckerVisitor();
+        n.accept(visitor);
+
+        Map<String, ERROR_KIND> errors = visitor.getErrors();
+        Assert.assertFalse(errors.isEmpty());
+
     }
 
     @Test
-    public void testStationDoubleDeclaration() throws IOException, StationParserException {
-        ASTNode n = parser.parse(new File("./target/classes/data/checkedStationsDoubleDeclaration.txt"));
-        ASTCheckerVisitor builder = new ASTCheckerVisitor();
-        n.accept(builder);
-        Map<String, ERROR_KIND> mapError =  builder.getErrors();
-        Assert.assertFalse(mapError.containsValue(ERROR_KIND.EMPTY_LIST));
-        Assert.assertTrue(mapError.containsValue(ERROR_KIND.DUPLICATE_DECLARATION));
-        Assert.assertEquals(2, mapError.size());
+    public void capacite0() throws IOException, StationParserException{
+        ASTNode n = parser.parse(new File("./target/classes/data/capacite1.txt"));
+        ASTCheckerVisitor visitor = new ASTCheckerVisitor();
+        n.accept(visitor);
+
+        Map<String, ERROR_KIND> errors = visitor.getErrors();
+        System.out.println(errors.values());
+        Assert.assertFalse(errors.isEmpty());
+
     }
 
     @Test
-    public void testStationNombre() throws IOException, StationParserException {
-        ASTNode n = parser.parse(new File("./target/classes/data/checkedStationsNombre.txt"));
-        ASTCheckerVisitor builder = new ASTCheckerVisitor();
-        n.accept(builder);
-        Map<String, ERROR_KIND> mapError =  builder.getErrors();
-        Assert.assertFalse(mapError.containsValue(ERROR_KIND.EMPTY_LIST));
-        Assert.assertTrue(mapError.containsValue(ERROR_KIND.WRONG_NUMBER_VALUE));
-        Assert.assertEquals(6, mapError.size());
+    public void capaciteDouble() throws IOException, StationParserException{
+        ASTNode n = parser.parse(new File("./target/classes/data/capacite2.txt"));
+        ASTCheckerVisitor visitor = new ASTCheckerVisitor();
+        n.accept(visitor);
+
+        Map<String, ERROR_KIND> errors = visitor.getErrors();
+        System.out.println(errors.values());
+        Assert.assertFalse(errors.isEmpty());
+
     }
+
+    @Test
+    public void capaciteNegatif() throws IOException, StationParserException{
+        ASTNode n = parser.parse(new File("./target/classes/data/capacite4.txt"));
+        ASTCheckerVisitor visitor = new ASTCheckerVisitor();
+        n.accept(visitor);
+
+        Map<String, ERROR_KIND> errors = visitor.getErrors();
+        System.out.println(errors.values());
+        Assert.assertFalse(errors.isEmpty());
+
+    }
+
+    @Test
+    public void zzzzzzzzzz() throws IOException, StationParserException{
+        ASTNode n = parser.parse(new File("./target/classes/data/capacite3.txt"));
+        ASTCheckerVisitor visitor = new ASTCheckerVisitor();
+        n.accept(visitor);
+
+        Map<String, ERROR_KIND> errors = visitor.getErrors();
+        System.out.println(errors.values());
+        Assert.assertFalse(errors.isEmpty());
+
+    }
+
+    @Test
+    public void empty() throws IOException, StationParserException{
+        ASTNode n = parser.parse(new File("./target/classes/data/empty.txt"));
+        ASTCheckerVisitor visitor = new ASTCheckerVisitor();
+        n.accept(visitor);
+
+        Map<String, ERROR_KIND> errors = visitor.getErrors();
+        System.out.println(errors.values());
+        Assert.assertFalse(errors.isEmpty());
+
+    }
+
+    @Test
+    public void duplicateCdelca() throws IOException, StationParserException{
+        ASTNode n = parser.parse(new File("./target/classes/data/duplicatedecla.txt"));
+        ASTCheckerVisitor visitor = new ASTCheckerVisitor();
+        n.accept(visitor);
+
+        Map<String, ERROR_KIND> errors = visitor.getErrors();
+        System.out.println(errors.values());
+        Assert.assertFalse(errors.isEmpty());
+
+    }
+
 }
