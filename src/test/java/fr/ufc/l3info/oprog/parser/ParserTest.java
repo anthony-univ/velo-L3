@@ -1,7 +1,6 @@
 package fr.ufc.l3info.oprog.parser;
 
 import fr.ufc.l3info.oprog.Station;
-import org.junit.Assert;
 import org.junit.Test;
 
 import java.io.File;
@@ -82,23 +81,94 @@ public class ParserTest {
     }
 
     @Test
-    public void testStationBuilderNOvalidNameWithInvalidStationWeeeeord() throws IOException, StationParserException {
-        int c=0;
-        for(int i = 0 ; i <= 15; ++i) {
-            try{ASTNode n = parser.parse(new File("./target/classes/data/stationsErrone"+i+".txt"));}
-            catch(Exception StationParserException ){++c;}
+    public void testStationBuilderInsensibleCasse() throws IOException, StationParserException {
+        ASTNode n = parser.parse(new File("./target/classes/data/stationsOK1.txt"));
+        ASTStationBuilder builder = new ASTStationBuilder();
+        n.accept(builder);
+        assertEquals(2, builder.getStations().size());
+        int nb = 0;
+        for (Station s : builder.getStations()) {
+            if (s.getNom().equals("21 - Avenue Fontaine Argent, Boulevard Diderot")) {
+                assertEquals(12, s.capacite());
+                nb = nb | 1;
+            }
+            else if (s.getNom().equals("Avenue du Maréchal Foch")) {
+                assertEquals(10, s.capacite());
+                nb = nb | 2;
+            }
         }
-        Assert.assertEquals(15,c); ;
+        assertEquals(3, nb);
+    }
+
+    @Test(expected = StationParserException.class)
+    public void testParseErrorDelimitage() throws StationParserException, IOException {
+            ASTNode n = parser.parse(new File("./target/classes/data/stationsKO.txt"));
+    }
+
+    @Test(expected = StationParserException.class)
+    public void testParseErrorAccoladeOuvrante() throws StationParserException, IOException {
+        ASTNode n = parser.parse(new File("./target/classes/data/stationsKO1.txt"));
+    }
+
+    @Test(expected = StationParserException.class)
+    public void testParseErrorAccoladeFermante() throws StationParserException, IOException {
+        ASTNode n = parser.parse(new File("./target/classes/data/stationsKO2.txt"));
+    }
+
+    @Test(expected = StationParserException.class)
+    public void testParseErrorDeuxPoints() throws StationParserException, IOException {
+        ASTNode n = parser.parse(new File("./target/classes/data/stationsKO3.txt"));
+    }
+
+    @Test(expected = StationParserException.class)
+    public void testParseErrorPointsVirgule() throws StationParserException, IOException {
+        ASTNode n = parser.parse(new File("./target/classes/data/stationsKO4.txt"));
+    }
+
+    @Test(expected = StationParserException.class)
+    public void testParseErrorStationsAbsent() throws StationParserException, IOException {
+        ASTNode n = parser.parse(new File("./target/classes/data/stationsKO5.txt"));
+    }
+
+    @Test(expected = StationParserException.class)
+    public void testParseErrorNombre1() throws StationParserException, IOException {
+        ASTNode n = parser.parse(new File("./target/classes/data/stationsKO6.txt"));
+    }
+
+    @Test(expected = StationParserException.class)
+    public void testParseErrorNombre2() throws StationParserException, IOException {
+        ASTNode n = parser.parse(new File("./target/classes/data/stationsKO7.txt"));
+    }
+
+    @Test(expected = StationParserException.class)
+    public void testParseErrorNombre3() throws StationParserException, IOException {
+        ASTNode n = parser.parse(new File("./target/classes/data/stationsKO8.txt"));
     }
 
     @Test
-    public void testStationBuilderNOvalidNameOK() throws IOException, StationParserException {
-        int c=0;
-        for(int i = 0 ; i <= 1; ++i) {
-            try{ASTNode n = parser.parse(new File("./target/classes/data/stationsOK"+i+".txt"));}
-            catch(Exception StationParserException){++c;}
-        }
-        Assert.assertEquals(0,c);
+    public void testParseNombre4() throws StationParserException, IOException {
+        ASTNode n = parser.parse(new File("./target/classes/data/stationsOK3.txt"));
+    }
+
+    @Test(expected = StationParserException.class)
+    public void testParseErrorNombre6() throws StationParserException, IOException {
+        ASTNode n = parser.parse(new File("./target/classes/data/stationsKO10.txt"));
+    }
+
+
+    @Test(expected = StationParserException.class)
+    public void testParseErrorMotAbsent() throws StationParserException, IOException {
+        ASTNode n = parser.parse(new File("./target/classes/data/stationsKO11.txt"));
+    }
+
+    @Test(expected = StationParserException.class)
+    public void testParseErrorMotAccentue() throws StationParserException, IOException {
+        ASTNode n = parser.parse(new File("./target/classes/data/stationsKO12.txt"));
+    }
+
+    @Test
+    public void testParseMotInsensibleCase() throws StationParserException, IOException {
+        ASTNode n = parser.parse(new File("./target/classes/data/stationsOK2.txt"));
     }
 
 }
