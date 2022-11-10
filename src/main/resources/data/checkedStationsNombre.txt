@@ -1,0 +1,41 @@
+station "21 - Avenue Fontaine Argent, Boulevard Diderot" {
+    latitude:47.2477615;
+    longitude:5.9835995;
+    capacite:12
+}
+
+station "Avenue du Maréchal Foch" {
+    capacite : 0 ;
+    longitude : 6.022671 ;
+    latitude : 47.246511
+}
+
+station "Victor Hugo" {
+    capacite : -42 ;
+    longitude : 6.022671 ;
+    latitude : 47.246511
+}
+
+station "Victor Hugo 1" {
+    capacite : 42.1 ;
+    longitude : 6.022671 ;
+    latitude : 47.246511
+}
+
+station "Victor Hugo 2" {
+    capacite : 42.0 ;
+    longitude : 6.022671 ;
+    latitude : 47.246511
+}
+
+station "Victor Hugo 3" {
+    capacite : 42.00 ;
+    longitude : 6.022671 ;
+    latitude : 47.246511
+}
+
+station "Victor Hugo 4" {
+    capacite : -42.00 ;
+    longitude : 6.022671 ;
+    latitude : 47.246511
+}
