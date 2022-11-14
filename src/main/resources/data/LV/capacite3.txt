@@ -1,0 +1,4 @@
+station "gyyuktf" {
+    capacite : 10 ;
+    latitude : 47.246511
+}
