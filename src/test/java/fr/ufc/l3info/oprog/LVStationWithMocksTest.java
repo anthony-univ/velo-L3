@@ -178,7 +178,6 @@ public class LVStationWithMocksTest {
         Station s = new Station("Gare Viotte",47.24705,6.0219527,10);
         s.setRegistre(mockRegistre);
         Abonne mockAbonne = Mockito.mock(Abonne.class);
-        Mockito.when(mockRegistre.nbEmpruntsEnCours(Mockito.any(Abonne.class))).thenReturn(1);
         Assert.assertEquals(0, s.arrimerVelo(mockVelo, 1));
         Assert.assertEquals(null, s.emprunterVelo(mockAbonne, 0));
 
@@ -189,7 +188,6 @@ public class LVStationWithMocksTest {
         Station s = new Station("Gare Viotte",47.24705,6.0219527,10);
         s.setRegistre(mockRegistre);
         Abonne mockAbonne = Mockito.mock(Abonne.class);
-        Mockito.when(mockAbonne.estBloque()).thenReturn(true);
         Assert.assertEquals(0, s.arrimerVelo(mockVelo, 1));
         Assert.assertEquals(null, s.emprunterVelo(mockAbonne, 0));
 
