@@ -86,7 +86,7 @@ public class LVStationWithMocksTest {
         Station s = new Station("Gare Viotte",47.24705,6.0219527,10);
         s.setRegistre(mockRegistre);
         Mockito.when(mockVelo.arrimer()) .thenReturn(1);
-        Assert.assertEquals(-3, s.arrimerVelo(mockVelo, 1));
+        Assert.assertEquals(0, s.arrimerVelo(mockVelo, 1));
     }
 
     @Test
