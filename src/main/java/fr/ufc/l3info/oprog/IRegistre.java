@@ -50,4 +50,6 @@ public interface IRegistre {
      *          d'utilisation de chaque vélo.
      */
     double facturation(Abonne a, long debut, long fin);
+
+    Abonne emprunteur(IVelo v);
 }
