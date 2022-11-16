@@ -4,9 +4,10 @@ import fr.ufc.l3info.oprog.parser.*;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.Iterator;
-import java.util.Map;
-import java.util.Set;
+import java.sql.Timestamp;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.*;
 
 public class Ville implements Iterable<Station>{
 
@@ -15,6 +16,8 @@ public class Ville implements Iterable<Station>{
     private Set<Station> stations;
 
     private IRegistre r;
+
+    private Set<Abonne> setDabo = new HashSet<Abonne>();
 
     /** Instance singleton du parser de stations */
     final StationParser parser = StationParser.getInstance();
@@ -131,6 +134,7 @@ public class Ville implements Iterable<Station>{
         } catch (Exception IncorrectNameException) {
             return null;
         }
+        setDabo.add(a);
         return a;
     }
 
@@ -143,7 +147,7 @@ public class Ville implements Iterable<Station>{
      * @return
      */
     public Iterator<Station> iterator(){
-
+        return null;
     }
 
     /**
@@ -156,8 +160,34 @@ public class Ville implements Iterable<Station>{
      * @param annee
      * @return
      */
-    public Map<Abonne, Double> facturation(int mois, int annee){
+    public Map<Abonne, Double> facturation(int mois, int annee)   {
+        Map<Abonne,Double> facturation = new HashMap<Abonne,Double>();
+        try {
+            String moiss = (mois < 10) ? "0"+Integer.toString(mois) : Integer.toString(mois);
+            SimpleDateFormat sdf1 = new SimpleDateFormat("dd-M-yyyy hh:mm:ss");
+            String dateInString = "01-"+moiss+"-"+Integer.toString(annee)+" 0:0:0";
+            Date date1 = sdf1.parse(dateInString);
 
+            String []tabNobisextille = {"31","28","31","30","31","30","31","31","30","31","30","31"};
+            String []tabBisextille = {"31","29","31","30","31","30","31","31","30","31","30","31"};
+            String dernierJour = tabNobisextille[mois-1];
+            if( ( ( annee % 4 == 0 ) && ( annee % 100 != 0 ) ) || ( annee % 400 == 0 ) ){
+                dernierJour = tabBisextille[mois-1];
+            }
+
+            SimpleDateFormat sdf2 = new SimpleDateFormat("dd-M-yyyy hh:mm:ss");
+            String dateInString2 = dernierJour+"-08-"+Integer.toString(annee)+" 23:59:59";
+            Date date2 = sdf2.parse(dateInString2);
+
+            for (Abonne a: setDabo) {
+                facturation.put(a,r.facturation(a,date1.getTime(),date2.getTime()));
+            }
+        }
+        catch(Exception ParseException){
+
+        }
+
+        return facturation;
     }
 
 
