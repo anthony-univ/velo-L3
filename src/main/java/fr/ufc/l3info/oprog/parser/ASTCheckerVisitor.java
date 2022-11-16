@@ -102,11 +102,3 @@ public class ASTCheckerVisitor implements ASTNodeVisitor {
     }
 }
 
-enum ERROR_KIND {
-    EMPTY_LIST,
-    EMPTY_STATION_NAME,
-    DUPLICATE_STATION_NAME,
-    MISSING_DECLARATION,
-    DUPLICATE_DECLARATION,
-    WRONG_NUMBER_VALUE
-}
