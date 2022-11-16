@@ -62,6 +62,10 @@ public class Station {
         if (this.registre == null || a == null || v == null) {
             return null;
         }
+        if(v.estAbime()) {
+            return null;
+        }
+
         if(a.estBloque()) {
             return null;
         }
@@ -94,12 +98,19 @@ public class Station {
         if(v.arrimer() == -1) {
             return -3;
         }
+
+        this.bornes[b-1] = v;
+        if(v.estAbime()) {
+            Abonne a = registre.emprunteur(v);
+            if(a!=null) {
+                a.bloquer();
+            }
+        }
+
         if(this.registre.retourner(v, maintenant()) != 0) {
-            this.bornes[b-1] = v;
             return -4;
         }
 
-        this.bornes[b-1] = v;
         return 0;
     }
 
@@ -207,4 +218,5 @@ public class Station {
     public long maintenant() {
         return System.currentTimeMillis();
     }
+
 }

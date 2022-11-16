@@ -13,7 +13,7 @@ public class AGGJRegistreTest {
     @Before
     public void before() throws IncorrectNameException {
         r = new JRegistre();
-        a = new Abonne("Paul");
+        a = new Abonne("paul", "11111-11111-11111111111-48");
         v = new Velo();
     }
 

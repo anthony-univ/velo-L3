@@ -116,7 +116,7 @@ public class JRegistre implements IRegistre {
     }
 
     public Abonne emprunteur(IVelo v) {
-        return null;
+        return empruntsEnCours.get(v);
     }
 
     private class Emprunt {

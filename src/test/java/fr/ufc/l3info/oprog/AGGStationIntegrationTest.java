@@ -493,5 +493,32 @@ public class AGGStationIntegrationTest {
         s.equilibrer(camions);
         Assert.assertEquals(4, s.capacite()- s.nbBornesLibres());
     }
+
+    @Test
+    public void testRetournerVeloabimeAbonneBloque() {
+        s.setRegistre(r);
+        IVelo v = new Velo();
+        IVelo v2 = new Velo();
+        s.arrimerVelo(v, 1);
+        s.arrimerVelo(v, 2);
+        Assert.assertNotNull(s.emprunterVelo(a, 1));
+        v.abimer();
+        Assert.assertTrue(v.estAbime());
+        Assert.assertEquals(0, s.arrimerVelo(v, 1));
+        Assert.assertTrue(a.estBloque());
+        Assert.assertNull(s.emprunterVelo(a, 2)); // impossible emprunter car bloque
+    }
+
+    @Test
+    public void testReemprunterVeloAbime() throws IncorrectNameException {
+        s.setRegistre(r);
+        IVelo v = new Velo();
+
+        s.arrimerVelo(v, 1);
+        v.abimer();
+        Assert.assertTrue(v.estAbime());
+
+        Assert.assertNull(s.emprunterVelo(a, 1)); // impossible emprunter car velo abimé
+    }
 }
 
