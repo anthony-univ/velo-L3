@@ -62,13 +62,14 @@ public class Station {
         if (this.registre == null || a == null || v == null) {
             return null;
         }
-        if(v.estAbime()) {
+        if(v.estAbime()) { // nouvelle fonctioanlite
             return null;
         }
 
         if(a.estBloque()) {
             return null;
         }
+
         if(b < 1 || b > this.capacite) {
             return null;
         }
@@ -100,7 +101,7 @@ public class Station {
         }
 
         this.bornes[b-1] = v;
-        if(v.estAbime()) {
+        if(v.estAbime()) { // nouvelle fonctioanlite
             Abonne a = registre.emprunteur(v);
             if(a!=null) {
                 a.bloquer();
