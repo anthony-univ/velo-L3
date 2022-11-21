@@ -1,0 +1,36 @@
+station "Gare Viotte" {
+    latItude:47.246501551427329;
+    loNgitude:6.022715427111734;
+    capAcite:10
+}
+
+station "Saint Jacques" {
+    latItude:47.234970856296655;
+    loNgitude:6.020961226259578;
+    capAcite:12
+}
+
+station "Granvelle" {
+    latItude:47.235310381596307;
+    loNgitude:6.025353690286829;
+    capAcite:10
+}
+
+station "Victor Hugo" {
+    latItude:47.234841756122286;
+    loNgitude:6.029500146346702;
+    capAcite:8
+}
+
+station "Mairie" {
+    latItude:47.236701239866434;
+    loNgitude:6.022315779424154;
+    capAcite:10
+}
+
+station "Jean Cornet" {
+    latItude:47.236109146208591;
+    loNgitude:6.029768734531883;
+    capAcite:12
+}
+

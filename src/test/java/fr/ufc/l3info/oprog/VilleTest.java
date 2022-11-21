@@ -13,6 +13,7 @@ import java.util.Map;
 public class VilleTest {
 
         final String path = "./target/classes/data/AGG/";
+        final String vraiPath = "./target/classes/data/";
 
         private Ville v = new Ville();
 
@@ -70,26 +71,34 @@ public class VilleTest {
         }
 
         @Test
-        public void TestFacturation() throws IOException, IncorrectNameException {
+        public void TestFacturation() throws IOException {
                 v.initialiser(new File(path + "stationsOK2.txt"));
                 Assert.assertNotNull(v.getStation("21 - Avenue Fontaine Argent, Boulevard Diderot"));
                 Assert.assertNotNull(v.getStation("Avenue du Maréchal Foch"));
 
                 after(2);
 
+                Abonne aa = v.creerAbonne("Léo", "11111-11111-11111111111-48");
                 Abonne a = v.creerAbonne("Anthony", "11111-11111-11111111111-48");
                 IVelo velo = new Velo();
+                IVelo veloo = new Velo();
 
                 Station s = Mockito.spy( v.getStation("Avenue du Maréchal Foch"));
 
                 s.arrimerVelo(velo, 1);
-                long mtn = System.currentTimeMillis();
-                long dans2h =  System.currentTimeMillis() + 120000;
+                s.arrimerVelo(veloo, 3);
+                long mtn = 1669043486238L;  //novembre 21/2022
+                long dans2h =  mtn + 120000;
 
                 Mockito.when(s.maintenant()).thenReturn(mtn);
                 s.emprunterVelo(a, 1);
                 Mockito.when(s.maintenant()).thenReturn(dans2h);
                 s.arrimerVelo(velo, 2);
+
+                Mockito.when(s.maintenant()).thenReturn(mtn);
+                s.emprunterVelo(aa, 3);
+                Mockito.when(s.maintenant()).thenReturn(dans2h);
+                s.arrimerVelo(veloo, 4);
 
                 Map<Abonne,Double> facturations = v.facturation(11, 2022);
                 for (Map.Entry m: facturations.entrySet()) {
@@ -98,6 +107,17 @@ public class VilleTest {
                         Assert.assertEquals(0.0667, (Double) m.getValue(), 0.01);
                 }
         }
+
+        @Test
+        public void iterator() throws IOException {
+                v.initialiser(new File(vraiPath + "OK1.txt"));
+
+                for (Station s: v) {
+                        System.out.println(s.getNom());
+                }
+        }
+
+
 
 
 }

@@ -45,15 +45,15 @@ public class Ville implements Iterable<Station>{
      * @param f fichier de description
      * @throws IOException issue du parser
      */
-    public void initialiser(File f) throws IOException {
+    public void initialiser(File f) throws IOException{
 
         ASTNode n = null;
         try{
             n = parser.parse(f);
         }
         catch(Exception StationParserException){
-            return ;
             //throw new IOException(); ///////////////:voir avec léo
+            return;
         }
 
         ASTCheckerVisitor visitor = new ASTCheckerVisitor();
@@ -72,13 +72,13 @@ public class Ville implements Iterable<Station>{
 
 
         for (Station s : this.stations) {
-            System.out.println("initialiser;" + s.getNom()+ ";principale defaut;" + name +";");
+            //System.out.println("initialiser;" + s.getNom()+ ";principale defaut;" + name +";");
             s.setRegistre(this.r);
             if(name.equals(s.getNom())) {
                 this.stationPrincipal = s;
             }
         }
-        System.out.println("station  principale ->" + stationPrincipal.getNom());
+        //System.out.println("station  principale ->" + stationPrincipal.getNom());
     }
 
     /**
