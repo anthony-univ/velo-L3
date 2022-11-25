@@ -52,7 +52,6 @@ public class Ville implements Iterable<Station>{
             n = parser.parse(f);
         }
         catch(Exception StationParserException){
-            //throw new IOException(); ///////////////:voir avec léo
             return;
         }
 

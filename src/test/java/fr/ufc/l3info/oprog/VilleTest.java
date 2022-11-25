@@ -3,6 +3,7 @@ package fr.ufc.l3info.oprog;
 import org.junit.Assert;
 import org.junit.Test;
 import org.mockito.Mockito;
+import org.mockito.internal.matchers.Null;
 
 import java.io.File;
 import java.io.IOException;
@@ -70,6 +71,95 @@ public class VilleTest {
                 Assert.assertEquals(v.getStation("Avenue du Maréchal Foch"), v.getStationPlusProche(38.47, 10.2));
         }
 
+
+
+
+
+        @Test
+        public void setStationPrincipaleValide() throws IOException {
+                v.initialiser(new File(vraiPath + "OK1.txt"));
+                Station principale = v.iterator().next();
+                v.setStationPrincipale("Mairie");
+                Station bis = v.iterator().next();
+                Assert.assertEquals("Mairie",bis.getNom());
+        }
+
+        @Test
+        public void setStationPrincipaleNoValide() throws IOException {
+                v.initialiser(new File(vraiPath + "OK1.txt"));
+                Station principale = v.iterator().next();
+                v.setStationPrincipale("Mairiee");
+                Station bis = v.iterator().next();
+                Assert.assertEquals("Gare Viotte",bis.getNom());
+        }
+
+        @Test
+        public void setStationPrincipaleNull() throws IOException {
+                v.initialiser(new File(vraiPath + "OK1.txt"));
+                Station principale = v.iterator().next();
+                v.setStationPrincipale(null);
+                Station bis = v.iterator().next();
+                Assert.assertEquals("Gare Viotte",bis.getNom());
+        }
+
+
+
+        @Test
+        public void getStationTestValide() throws IOException {
+            v.initialiser(new File(vraiPath + "OK1.txt"));
+            Assert.assertEquals("Mairie",v.getStation("Mairie").getNom());
+        }
+
+        @Test
+        public void getStationTestNoValideNull() throws IOException {
+                v.initialiser(new File(vraiPath + "OK1.txt"));
+                Assert.assertEquals(null,v.getStation(null));
+        }
+
+        @Test
+        public void getStationTestNoValideBadName() throws IOException {
+                v.initialiser(new File(vraiPath + "OK1.txt"));
+                Assert.assertEquals(null,v.getStation("zeghergerhee"));
+        }
+
+
+        @Test
+        public void getStationPlusProche() throws IOException {
+                v.initialiser(new File(vraiPath + "OK1.txt"));
+                Assert.assertEquals("Gare Viotte",v.getStationPlusProche(47.24559926269805, 6.021859188084817).getNom());
+        }
+
+
+        @Test
+        public void creerAbonneValide() throws IOException {
+                v.initialiser(new File(vraiPath + "OK1.txt"));
+                Abonne a = v.creerAbonne("anthoonyzefg","11111-11111-11111111111-48");
+                Assert.assertTrue(a != null);
+        }
+
+        @Test
+        public void iterator() throws IOException {
+                v.initialiser(new File(vraiPath + "OK1.txt"));
+
+                Iterator<Station> it = v.iterator();
+
+                Station current = it.next();
+                double d = 0.0;
+
+                while(it.hasNext()){
+                        Station TempCurrent = it.next();
+                        System.out.println(TempCurrent.getNom());
+                        double dPrime = current.distance(TempCurrent);
+                        if(dPrime > d){
+                                Assert.assertTrue(true);
+                        }
+                        d = dPrime;
+                        current = TempCurrent;
+                }
+        }
+
+
+
         @Test
         public void TestFacturation() throws IOException {
                 v.initialiser(new File(path + "stationsOK2.txt"));
@@ -108,14 +198,8 @@ public class VilleTest {
                 }
         }
 
-        @Test
-        public void iterator() throws IOException {
-                v.initialiser(new File(vraiPath + "OK1.txt"));
 
-                for (Station s: v) {
-                        System.out.println(s.getNom());
-                }
-        }
+
 
 
 
