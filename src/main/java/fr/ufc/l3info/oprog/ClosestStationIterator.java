@@ -10,17 +10,17 @@ public class ClosestStationIterator implements Iterator<Station> {
     private Set<Station> stations;
 
     public ClosestStationIterator(Set<Station> stations, Station s) {
-            if(s == null) {
-                this.current = null;
-                this.stations = new HashSet<>();
-            }else {
-                this.current = s;
-                this.stations = new HashSet<>(stations);
-            }
+        if(s == null || stations == null || !stations.contains(s)) {
+            this.current = null;
+            this.stations = new HashSet<>();
+        }else {
+            this.current = s;
+            this.stations = new HashSet<>(stations);
+        }
     }
 
     public boolean hasNext() {
-        return this.stations.size() !=0;
+        return this.stations.size() != 0 ;
     }
 
     public Station next() {
@@ -50,7 +50,5 @@ public class ClosestStationIterator implements Iterator<Station> {
         return stationBefore;
     }
 
-    public void remove() {
-
-    }
+    public void remove() {}
 }
