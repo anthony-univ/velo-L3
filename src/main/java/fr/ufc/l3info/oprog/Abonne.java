@@ -102,7 +102,7 @@ public class Abonne {
     /**
      * Permet de bloquer volontairement un abonné.
      */
-    public void bloquer() {
+    protected void bloquer() {
         this.estBloqueVolontairement = true;
     }
 
