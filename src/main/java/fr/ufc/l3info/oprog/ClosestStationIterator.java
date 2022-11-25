@@ -33,13 +33,13 @@ public class ClosestStationIterator implements Iterator<Station> {
         this.stations.remove(this.current);
 
         Station stationPlusProcheAvolDoiseau = null;
-        double min = 0;
+        double min = 999999999999999999999999.0;
 
         for(Station s : this.stations) {
 
             double distance = s.distance(this.current);
 
-            if(stationPlusProcheAvolDoiseau == null || distance < min){
+            if(distance < min){
                 min = distance;
                 stationPlusProcheAvolDoiseau = s;
             }
