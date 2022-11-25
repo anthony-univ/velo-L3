@@ -44,7 +44,7 @@ public class Abonne {
      * @param nom le nom du nouvel abonné.
      * @throws IncorrectNameException si le nom de l'abonné n'est pas correct.
      */
-    public Abonne(String nom) throws IncorrectNameException {
+    protected Abonne(String nom) throws IncorrectNameException {
         if(nom == null || !Pattern.matches("^[ ]*[\\p{IsLatin}]([ -]?[\\p{IsLatin}]+)*[ ]*$", nom)) {
             throw new IncorrectNameException();
         }
@@ -63,7 +63,7 @@ public class Abonne {
      * @param rib le RIB
      * @throws IncorrectNameException si le nom de l'abonné n'est pas correct.
      */
-    public Abonne(String nom, String rib) throws IncorrectNameException {
+    protected Abonne(String nom, String rib) throws IncorrectNameException {
         this(nom);
 
         if(this.ribEstValide(rib)) {

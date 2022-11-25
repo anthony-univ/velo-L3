@@ -14,7 +14,7 @@ public class Velo implements IVelo{
     private double distanceAvantRevision;
     private double tarif;
 
-    public Velo() {
+    protected Velo() {
         this.typeCadre = TypeCadres.mixte;
         this.decrocher = true;
         this.abimer = false;
@@ -22,7 +22,7 @@ public class Velo implements IVelo{
         this.tarif = 2.0;
     }
 
-    public Velo(char t) {
+    protected Velo(char t) {
         this();
         switch (t) {
             case 'F':
